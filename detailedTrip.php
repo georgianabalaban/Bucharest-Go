@@ -9,23 +9,33 @@ require_once('db/sql.php');
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
   <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" href="http://localhost:8080/licenta/css/detailed-css.css">
-<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
-<script src="http://localhost:8080/licenta/js/detailedTrip.js"></script>
-
+  <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+  <script src="http://localhost:8080/licenta/js/detailedTrip.js"></script>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
-
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <body>
-
  <div id="map"></div>
+ <div id="informations">
+ <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; See details</span>
+ <div id="mySidenav" class="sidenav">
+  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+  <<!-- Output general info-->
+  <div id="output">
+ </div>
+</div>
+<div id="changePref">
+  <button id="changePrefBtn" type="button" class="btn btn-primary">Change preferences</button>
+  <button type="button" id="homeBtn" class="btn btn-info"><span class="glyphicon glyphicon-home"></span>       Go Home</button>
+</div>
 
- <div class="container" id="first">
+<div id="destinationsInfo">
+<div class="container" id="first">
   <div class="col-md-3 col-sm-6 col-xs-12">
           <div class="info-box bg-green">
             <span class="info-box-icon">
-              <!-- <i class="fa fa-thumbs-o-up"></i> --> 1
+              <!-- <i class="fa fa-thumbs-o-up"></i> --> A
             </span>
 
             <div class="info-box-content">
@@ -48,7 +58,7 @@ require_once('db/sql.php');
   <div class="col-md-3 col-sm-6 col-xs-12">
           <div class="info-box bg-green">
             <span class="info-box-icon">
-              <!-- <i class="fa fa-thumbs-o-up"></i> --> 2
+              <!-- <i class="fa fa-thumbs-o-up"></i> --> B
             </span>
 
             <div class="info-box-content">
@@ -71,7 +81,7 @@ require_once('db/sql.php');
   <div class="col-md-3 col-sm-6 col-xs-12">
           <div class="info-box bg-green">
             <span class="info-box-icon">
-              <!-- <i class="fa fa-thumbs-o-up"></i> --> 3
+              <!-- <i class="fa fa-thumbs-o-up"></i> --> C
             </span>
 
             <div class="info-box-content">
@@ -94,7 +104,7 @@ require_once('db/sql.php');
   <div class="col-md-3 col-sm-6 col-xs-12">
           <div class="info-box bg-green">
             <span class="info-box-icon">
-              <!-- <i class="fa fa-thumbs-o-up"></i> --> 4
+              <!-- <i class="fa fa-thumbs-o-up"></i> --> D
             </span>
 
             <div class="info-box-content">
@@ -118,7 +128,7 @@ require_once('db/sql.php');
   <div class="col-md-3 col-sm-6 col-xs-12">
           <div class="info-box bg-green">
             <span class="info-box-icon">
-              <!-- <i class="fa fa-thumbs-o-up"></i> --> 5
+              <!-- <i class="fa fa-thumbs-o-up"></i> --> E
             </span>
 
             <div class="info-box-content">
@@ -141,7 +151,7 @@ require_once('db/sql.php');
   <div class="col-md-3 col-sm-6 col-xs-12">
           <div class="info-box bg-green">
             <span class="info-box-icon">
-              <!-- <i class="fa fa-thumbs-o-up"></i> --> 6
+              <!-- <i class="fa fa-thumbs-o-up"></i> --> F
             </span>
 
             <div class="info-box-content">
@@ -159,31 +169,33 @@ require_once('db/sql.php');
           <!-- /.info-box -->
         </div>
 </div>
+</div>
+  
 
-
-<!-- Output general info-->
-  <div id="output">
- </div>
-
-
+ 
 <!--  Modal for feedback -->
 <div id="mybutton">
 <button data-toggle="modal" data-target="#myModal" class="feedback">Feedback</button>
 </div>
 
-<!-- Modal -->
-<div id="myModal" class="modal fade" role="dialog">
-  <div class="modal-dialog">
+ </div>
 
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Rate your destinations and upload pics</h4>
-      </div>
-      <div class="modal-body">
-      <form method="post" enctype="multipart/form-data" id="feedbackForm">
-        <div id="feedone" class="feedContainer">
+  <div id="directions"></div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog modal-lg">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Give feedback and upload pictures</h4>
+        </div>
+        <div class="modal-body">
+          <form method="post" enctype="multipart/form-data" id="feedbackForm">
+          <div id="leftModal">
+              <div id="feedone" class="feedContainer">
           <p></p>
           <div class="stars">
               <input class="star star-5" value="5" id="star-1-5" type="radio" name="starone"/>
@@ -248,126 +260,116 @@ require_once('db/sql.php');
           </div>
         </div>
         <div id="feedthree" class="feedContainer">
-        <p></p>
-        <div class="stars">
-            <input class="star star-5" value="5" id="star-3-5" type="radio" name="starthree"/>
-            <label class="star star-5" for="star-3-5"></label>
-            <input class="star star-4" value="4" id="star-3-4" type="radio" name="starthree"/>
-            <label class="star star-4" for="star-3-4"></label>
-            <input class="star star-3" value="3" id="star-3-3" type="radio" name="starthree"/>
-            <label class="star star-3" for="star-3-3"></label>
-            <input class="star star-2" value="2" id="star-3-2" type="radio" name="starthree"/>
-            <label class="star star-2" for="star-3-2"></label>
-            <input class="star star-1" value="1" id="star-3-1" type="radio" name="starthree"/>
-            <label class="star star-1" for="star-3-1"></label>
-        </div>
-        <div class="fileUploader">
-          <div class="col-md-6">
-          <div class="form-group">
-              <label>Upload Image</label>
-              <div class="input-group">
-                  <span class="input-group-btn">
-                      <span id="uploadBtnThree" class="btn btn-default btn-file">
-                          Browse… <input type="file" id="imgInpThree" name="imgThree">
+            <p></p>
+            <div class="stars">
+                <input class="star star-5" value="5" id="star-3-5" type="radio" name="starthree"/>
+                <label class="star star-5" for="star-3-5"></label>
+                <input class="star star-4" value="4" id="star-3-4" type="radio" name="starthree"/>
+                <label class="star star-4" for="star-3-4"></label>
+                <input class="star star-3" value="3" id="star-3-3" type="radio" name="starthree"/>
+                <label class="star star-3" for="star-3-3"></label>
+                <input class="star star-2" value="2" id="star-3-2" type="radio" name="starthree"/>
+                <label class="star star-2" for="star-3-2"></label>
+                <input class="star star-1" value="1" id="star-3-1" type="radio" name="starthree"/>
+                <label class="star star-1" for="star-3-1"></label>
+            </div>
+            <div class="fileUploader">
+              <div class="col-md-6">
+              <div class="form-group">
+                  <label>Upload Image</label>
+                  <div class="input-group">
+                      <span class="input-group-btn">
+                          <span id="uploadBtnThree" class="btn btn-default btn-file">
+                              Browse… <input type="file" id="imgInpThree" name="imgThree">
+                          </span>
                       </span>
-                  </span>
-                  <input type="text" class="form-control" readonly>
+                      <input type="text" class="form-control" readonly>
+                  </div>
+                  <img class="imgUpload" id='img-upload-three'/>
               </div>
-              <img class="imgUpload" id='img-upload-three'/>
           </div>
-      </div>
-      </div>
+          </div>
         </div>
-        <div id="feedfour" class="feedContainer">
-          <p></p>
-          <div class="stars">
-              <input class="star star-5" value="5" id="star-4-5" type="radio" name="starfour"/>
-              <label class="star star-5" for="star-4-5"></label>
-              <input class="star star-4" value="4" id="star-4-4" type="radio" name="starfour"/>
-              <label class="star star-4" for="star-4-4"></label>
-              <input class="star star-3" value="3" id="star-4-3" type="radio" name="starfour"/>
-              <label class="star star-3" for="star-4-3"></label>
-              <input class="star star-2" value="2" id="star-4-2" type="radio" name="starfour"/>
-              <label class="star star-2" for="star-4-2"></label>
-              <input class="star star-1" value="1" id="star-4-1" type="radio" name="starfour"/>
-              <label class="star star-1" for="star-4-1"></label>
           </div>
-          <div class="fileUploader">
-            <div class="col-md-6">
-            <div class="form-group">
-                <label>Upload Image</label>
-                <div class="input-group">
-                    <span class="input-group-btn">
-                        <span id="uploadBtnFour" class="btn btn-default btn-file">
-                            Browse… <input type="file" id="imgInpFour" name="imgFour">
-                        </span>
-                    </span>
-                    <input type="text" class="form-control" readonly>
-                </div>
-                <img class="imgUpload" id='img-upload-four'/>
+          <div id="rightModal">
+                <div id="feedfour" class="feedContainer">
+                  <p></p>
+                  <div class="stars">
+                      <input class="star star-5" value="5" id="star-4-5" type="radio" name="starfour"/>
+                      <label class="star star-5" for="star-4-5"></label>
+                      <input class="star star-4" value="4" id="star-4-4" type="radio" name="starfour"/>
+                      <label class="star star-4" for="star-4-4"></label>
+                      <input class="star star-3" value="3" id="star-4-3" type="radio" name="starfour"/>
+                      <label class="star star-3" for="star-4-3"></label>
+                      <input class="star star-2" value="2" id="star-4-2" type="radio" name="starfour"/>
+                      <label class="star star-2" for="star-4-2"></label>
+                      <input class="star star-1" value="1" id="star-4-1" type="radio" name="starfour"/>
+                      <label class="star star-1" for="star-4-1"></label>
+                  </div>
+                  <div class="fileUploader">
+                    <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Upload Image</label>
+                        <div class="input-group">
+                            <span class="input-group-btn">
+                                <span id="uploadBtnFour" class="btn btn-default btn-file">
+                                    Browse… <input type="file" id="imgInpFour" name="imgFour">
+                                </span>
+                            </span>
+                            <input type="text" class="form-control" readonly>
+                        </div>
+                        <img class="imgUpload" id='img-upload-four'/>
+                    </div>
+                  </div>
+                  </div>
+          </div>
+          <div id="feedfive">
+            <p></p>
+            <div class="stars">
+                <input class="star star-5" value="5" id="star-5-5" type="radio" name="starfive"/>
+                <label class="star star-5" for="star-5-5"></label>
+                <input class="star star-4" value="4" id="star-5-4" type="radio" name="starfive"/>
+                <label class="star star-4" for="star-5-4"></label>
+                <input class="star star-3" value="3" id="star-5-3" type="radio" name="starfive"/>
+                <label class="star star-3" for="star-5-3"></label>
+                <input class="star star-2" value="2" id="star-5-2" type="radio" name="starfive"/>
+                <label class="star star-2" for="star-5-2"></label>
+                <input class="star star-1" value="1" id="star-5-1" type="radio" name="starfive"/>
+                <label class="star star-1" for="star-5-1"></label>
+            </div>
+            <div class="fileUploader">
+              <div class="col-md-6">
+              <div class="form-group">
+                  <label>Upload Image</label>
+                  <div class="input-group">
+                      <span class="input-group-btn">
+                          <span id="uploadBtnFive" class="btn btn-default btn-file">
+                              Browse… <input type="file" id="imgInpFive" name="imgFive">
+                          </span>
+                      </span>
+                      <input type="text" class="form-control" readonly>
+                  </div>
+                  <img class="imgUpload" id='img-upload-five'/>
+              </div>
+            </div>
             </div>
           </div>
           </div>
-        </div>
-        <div id="feedfive">
-          <p></p>
-          <div class="stars">
-              <input class="star star-5" value="5" id="star-5-5" type="radio" name="starfive"/>
-              <label class="star star-5" for="star-5-5"></label>
-              <input class="star star-4" value="4" id="star-5-4" type="radio" name="starfive"/>
-              <label class="star star-4" for="star-5-4"></label>
-              <input class="star star-3" value="3" id="star-5-3" type="radio" name="starfive"/>
-              <label class="star star-3" for="star-5-3"></label>
-              <input class="star star-2" value="2" id="star-5-2" type="radio" name="starfive"/>
-              <label class="star star-2" for="star-5-2"></label>
-              <input class="star star-1" value="1" id="star-5-1" type="radio" name="starfive"/>
-              <label class="star star-1" for="star-5-1"></label>
-          </div>
-          <div class="fileUploader">
-            <div class="col-md-6">
-            <div class="form-group">
-                <label>Upload Image</label>
-                <div class="input-group">
-                    <span class="input-group-btn">
-                        <span id="uploadBtnFive" class="btn btn-default btn-file">
-                            Browse… <input type="file" id="imgInpFive" name="imgFive">
-                        </span>
-                    </span>
-                    <input type="text" class="form-control" readonly>
-                </div>
-                <img class="imgUpload" id='img-upload-five'/>
-            </div>
-          </div>
-          </div>
-        </div>
-        <input type="submit" class="btn btn-primary" name="submitFeedback" value="Send">
+        <input type="submit" id="send" class="btn btn-primary" name="submitFeedback" value="Send">
         </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
+      
     </div>
   </div>
 
-</div>
 <script type="text/javascript">
-$(function () {
-  $('#feedbackForm').on('submit', function (e) {
-            $.ajax({
-                type: 'post',
-                url: './db/sql.php?action=feedback',
-                data: $('#feedbackForm').serialize(),
-                success: function (res) {
-                  if(res=="success"){
-                    alert("Thank you for your feedback!");
-                  }else{
-                    alert("error");
-                  }
-                }
-              });
-        });
-      });
-
+$('#changePrefBtn').click(function(){
+  window.location.href="http://localhost:8080/licenta/preferences.php";
+});
 
 
 var timpPentruVizitare='';
@@ -391,7 +393,6 @@ var timpPentruTransportare='';
   destinations.push("<?php echo $_SESSION['third']['destination_name']; ?>");
   destinations.push("<?php echo $_SESSION['fourth']['destination_name']; ?>");
   destinations.push("<?php echo $_SESSION['fifth']['destination_name']; ?>");
-  console.log(destinations);
 
   imagesLinks.push("<?php echo $_SESSION['first']['destination_image']; ?>");
   imagesLinks.push("<?php echo $_SESSION['second']['destination_image']; ?>");
@@ -455,15 +456,8 @@ var timpPentruTransportare='';
       
 
       //markerul de pe harta pentru locatia actuala
-      var userIcon = {
-        path: 'M 0, 0 m -15, 0 a 15, 15 0 1, 0 30, 0 a 15, 15 0 1, 0 -30, 0',
-        fillColor: '#3a8bc9',
-        fillOpacity: 0.9,
-        scale: 0.4,
-        strokeColor: '#ffffff',
-        strokeWeight: 2,
-        strokeOpacity: 0.8
-     };
+      var userIcon = 'https://chart.googleapis.com/chart?' +
+            'chst=d_map_pin_letter&chld=A|FF0000|000000';
       
 
       
@@ -511,15 +505,15 @@ var timpPentruTransportare='';
         var markersArray = [];
             //iconite markeri pt harta
             var icon1 = 'https://chart.googleapis.com/chart?' +
-            'chst=d_map_pin_letter&chld=1|FF0000|000000';
+            'chst=d_map_pin_letter&chld=B|FF0000|000000';
             var icon2 = 'https://chart.googleapis.com/chart?' +
-            'chst=d_map_pin_letter&chld=2|FF0000|000000';
+            'chst=d_map_pin_letter&chld=C|FF0000|000000';
             var icon3 = 'https://chart.googleapis.com/chart?' +
-            'chst=d_map_pin_letter&chld=3|FF0000|000000';
+            'chst=d_map_pin_letter&chld=D|FF0000|000000';
             var icon4 = 'https://chart.googleapis.com/chart?' +
-            'chst=d_map_pin_letter&chld=4|FF0000|000000';
+            'chst=d_map_pin_letter&chld=E|FF0000|000000';
             var icon5 = 'https://chart.googleapis.com/chart?' +
-            'chst=d_map_pin_letter&chld=5|FF0000|000000';
+            'chst=d_map_pin_letter&chld=F|FF0000|000000';
 
 
             //calcul vectori origini si destinatii
@@ -551,7 +545,6 @@ var timpPentruTransportare='';
 
             var outputDiv = document.getElementById('output');
             outputDiv.innerHTML = '';
-             deleteMarkers(markersArray);
 
             //add markers with images and data to map
              var showGeocodedAddressOnMap = function(index) {
@@ -656,8 +649,76 @@ var timpPentruTransportare='';
                   }
                 }
               }
+  
+    //show markers on map
+    for (var i = 0; i < destinations.length; i++) {
+    
+        geocoder.geocode({'address': destinations[i]},
+          showGeocodedAddressOnMap(i));
+    }
+        
+  /*display google maps directions*/
+   var waypts = [];
+              for (var i = 0; i < destinations.length-1; i++) {
+                  
+                    waypts.push({
+                      location: destinations[i],
+                      stopover: true
+                    });
+                  
+              }
+   directionsService.route({
+          origin: pos,
+          destination: destinations[destinations.length-1],
+          waypoints: waypts,
+          optimizeWaypoints: true,
+          travelMode: transportation
+        }, function(response, status) {
+          if (status === 'OK') {
+            directionsDisplay.setDirections(response);
+            
+          } else {
+            window.alert('Directions request failed due to ' + status);
+          }
+        });
 
-              //output title of destinations
+   //--------------------------------DISPLAY DETAILED DIRECTIONS--------------------------------
+
+    var directionsDisplay = new google.maps.DirectionsRenderer({
+    draggable: false,
+    suppressMarkers: true,
+    map: map,
+    panel: document.getElementById('directions')
+  });
+
+              for(var i=0; i<originList.length-1;i++){
+                var results = response.rows[i].elements;
+
+              //calcul distanta totala in km
+              var res=results[i].distance.text.split(' ');
+              var r=res[0].split(',');
+              var intreg=parseInt(r[0]);
+              var zecimala=parseInt(r[1]);
+              var dist=intreg+parseFloat(zecimala/10);
+              distantaTotala+=parseFloat(dist);
+
+              //calcul timp total
+              var tes=results[i].duration.text.split(' ');
+              if(tes.length==2){//daca are durata mai mica de o ora,adica contine doar minute
+                var min=parseInt(tes[0]);
+                transtationTime.push(min+" minutes");//timpul pentru fiecare destinatie
+                minuteTotale=minuteTotale+min; 
+              }else{//daca are durata mai mare de o ora
+                var min=parseInt(tes[2]);//nr minute returnat
+                var h=parseInt(tes[0]);//nr ore returnat transformat in minute
+                transtationTime.push(h+' hours and '+min+' minutes');
+                minuteTotale=minuteTotale+min+h;
+              }
+              
+            }
+
+
+ //output title of destinations
   $('#first .title').html("<p>Your location: "+originList[0]+"</p>");
   $('#second .title').html(destinations[0]);
   $('#third .title').html(destinations[1]);
@@ -689,71 +750,14 @@ var timpPentruTransportare='';
             $('#fourth .details ul').append("<li>Address: "+addresses[2]+" </li>");
             $('#fifth .details ul').append("<li>Address: "+addresses[3]+" </li>");
             $('#sixth .details ul').append("<li>Address: "+addresses[4]+" </li>");
-
-              //show markers on map
-              for (var i = 0; i < destinations.length; i++) {
-              
-                  geocoder.geocode({'address': destinations[i]},
-                    showGeocodedAddressOnMap(i));
-              }
-        
-  /*display google maps directions*/
-   var waypts = [];
-              for (var i = 0; i < destinations.length-1; i++) {
-                  
-                    waypts.push({
-                      location: destinations[i],
-                      stopover: true
-                    });
-                  
-              }
-   directionsService.route({
-          origin: pos,
-          destination: destinations[destinations.length-1],
-          waypoints: waypts,
-          optimizeWaypoints: true,
-          travelMode: transportation
-        }, function(response, status) {
-          if (status === 'OK') {
-            directionsDisplay.setDirections(response);
-            
-          } else {
-            window.alert('Directions request failed due to ' + status);
-          }
-        });
-
-              for(var i=0; i<originList.length-1;i++){
-                var results = response.rows[i].elements;
-
-              //calcul distanta totala in km
-              var res=results[i].distance.text.split(' ');
-              var r=res[0].split(',');
-              var intreg=parseInt(r[0]);
-              var zecimala=parseInt(r[1]);
-              var dist=intreg+parseFloat(zecimala/10);
-              distantaTotala+=parseFloat(dist);
-
-              //calcul timp total
-              var tes=results[i].duration.text.split(' ');
-              if(tes.length==2){//daca are durata mai mica de o ora,adica contine doar minute
-                var min=parseInt(tes[0]);
-                transtationTime.push(min+" minutes");//timpul pentru fiecare destinatie
-                minuteTotale=minuteTotale+min; 
-              }else{//daca are durata mai mare de o ora
-                var min=parseInt(tes[2]);//nr minute returnat
-                var h=parseInt(tes[0]);//nr ore returnat transformat in minute
-                transtationTime.push(h+' hours and '+min+' minutes');
-                minuteTotale=minuteTotale+min+h;
-              }
-              
-            }
-
+  
             //afisare timp de transportare intre fiecare destinatie
             $('#first .distanceBetween').append("Transportation time until next destination: "+transtationTime[0]);
             $('#second .distanceBetween').append("Transportation time until next destination: "+transtationTime[1]);
             $('#third .distanceBetween').append("Transportation time until next destination: "+transtationTime[2]);
             $('#fourth .distanceBetween').append("Transportation time until next destination: "+transtationTime[3]);
             $('#fifth .distanceBetween').append("Transportation time until next destination: "+transtationTime[4]);
+
 
 
           //calcul timp pentru transportare
@@ -802,16 +806,179 @@ var timpPentruTransportare='';
   }
 }
 
-      function deleteMarkers(markersArray) {
-        for (var i = 0; i < markersArray.length; i++) {
-          markersArray[i].setMap(null);
-        }
-        markersArray = [];
-      }
 
+
+<?php
+if(isset($_POST['submitFeedback'])){
+        $starOne=0;
+        $starTwo=0;
+        $starThree=0;
+        $starFour=0;
+        $starFive=0;
+        $imgOne="";
+        $imgTwo="";
+        $imgThree="";
+        $imgFour="";
+        $imgFive="";
+
+        if(isset($_POST['starone'])){
+          $starOne=$_POST['starone'];
+          $_SESSION['starOne']=$starOne;
+        }
+        if(isset($_POST['startwo'])){
+          $starTwo=$_POST['startwo'];
+          $_SESSION['starTwo']=$starTwo;
+        }
+        if(isset($_POST['starthree'])){
+          $starThree=$_POST['starthree'];
+          $_SESSION['starThree']=$starThree;
+        }
+        if(isset($_POST['starfour'])){
+          $starFour=$_POST['starfour'];
+          $_SESSION['starFour']=$starFour;
+        }
+        if(isset($_POST['starfive'])){
+          $starFive=$_POST['starfive'];
+          $_SESSION['starFive']=$starFive;
+        }
+       
+        $firstStars=getLastStars($_SESSION['first']['destination_id']);
+        $totalFirstStars=$firstStars['destination_stars']+$starOne;
+        $one=updateDestinationStars($_SESSION['first']['destination_id'],$totalFirstStars);
+
+        $secondStars=getLastStars($_SESSION['second']['destination_id']);
+        $totalSecondStars=$secondStars['destination_stars']+$starTwo;
+        $two=updateDestinationStars($_SESSION['second']['destination_id'],$totalSecondStars);
+
+        $thirdStars=getLastStars($_SESSION['third']['destination_id']);
+        $totalThirdStars=$thirdStars['destination_stars']+$starThree;
+        $three=updateDestinationStars($_SESSION['third']['destination_id'],$totalThirdStars);
+
+        $fourthStars=getLastStars($_SESSION['fourth']['destination_id']);
+        $totalFourthStars=$fourthStars['destination_stars']+$starFour;
+        $four=updateDestinationStars($_SESSION['fourth']['destination_id'],$totalFourthStars);
+
+        $fifthStars=getLastStars($_SESSION['fifth']['destination_id']);
+        $totalFifthStars=$fifthStars['destination_stars']+$starFive;
+        $five=updateDestinationStars($_SESSION['fifth']['destination_id'],$totalFifthStars);
+
+
+        if(isset($_FILES['imgOne'])){
+          if($_FILES['imgOne']['error']==0){
+                  switch ($_FILES['imgOne']['type']) {
+                        case 'image/jpg':
+                        case 'image/jpeg':
+                        case 'image/png':
+                        case 'image/gif':
+                            $imgOne= uniqid().$_FILES['imgOne']['name'];
+                            $_SESSION['feedback']['imgOne']=$imgOne;
+                            $r= move_uploaded_file($_FILES['imgOne']['tmp_name'], './images/uploaded/'.$imgOne);
+                            break;
+
+                        default:
+                            print 'tip necunoscut';
+                            break;
+                    }
+                }
+        }
+        if(isset($_FILES['imgTwo'])){
+          if($_FILES['imgTwo']['error']==0){
+                  switch ($_FILES['imgTwo']['type']) {
+                        case 'image/jpg':
+                        case 'image/jpeg':
+                        case 'image/png':
+                        case 'image/gif':
+                            $imgTwo= uniqid().$_FILES['imgTwo']['name'];
+                            $_SESSION['feedback']['imgTwo']=$imgTwo;
+                            $r= move_uploaded_file($_FILES['imgTwo']['tmp_name'], './images/uploaded/'.$imgTwo);
+                            break;
+
+                        default:
+                            print 'tip necunoscut';
+                            break;
+                    }
+                }
+        }
+        if(isset($_FILES['imgThree'])){
+          if($_FILES['imgThree']['error']==0){
+                  switch ($_FILES['imgThree']['type']) {
+                        case 'image/jpg':
+                        case 'image/jpeg':
+                        case 'image/png':
+                        case 'image/gif':
+                            $imgThree= uniqid().$_FILES['imgThree']['name'];
+                            $_SESSION['feedback']['imgThree']=$imgThree;
+                            $r= move_uploaded_file($_FILES['imgThree']['tmp_name'], './images/uploaded/'.$imgThree);
+                            break;
+
+                        default:
+                            print 'tip necunoscut';
+                            break;
+                    }
+                }
+        }
+        if(isset($_FILES['imgFour'])){
+          if($_FILES['imgFour']['error']==0){
+                  switch ($_FILES['imgFour']['type']) {
+                        case 'image/jpg':
+                        case 'image/jpeg':
+                        case 'image/png':
+                        case 'image/gif':
+                            $imgFour= uniqid().$_FILES['imgFour']['name'];
+                            $_SESSION['feedback']['imgFour']=$imgFour;
+                            $r= move_uploaded_file($_FILES['imgFour']['tmp_name'], './images/uploaded/'.$imgFour);
+                            break;
+
+                        default:
+                            print 'tip necunoscut';
+                            break;
+                    }
+                }
+        }
+        if(isset($_FILES['imgFive'])){
+          if($_FILES['imgFive']['error']==0){
+                  switch ($_FILES['imgFive']['type']) {
+                        case 'image/jpg':
+                        case 'image/jpeg':
+                        case 'image/png':
+                        case 'image/gif':
+                            $imgFive= uniqid().$_FILES['imgFive']['name'];
+                            $_SESSION['feedback']['imgFive']=$imgFive;
+                            $r= move_uploaded_file($_FILES['imgFive']['tmp_name'], './images/uploaded/'.$imgFive);
+                            break;
+
+                        default:
+                            print 'tip necunoscut';
+                            break;
+                    }
+                }
+        }
+
+
+        $res=insertFeedback($imgOne,$imgTwo,$imgThree,$imgFour,$imgFive,$starOne,$starTwo,$starThree,$starFour,$starFive);
+        if($res){
+          $feedId=getLastFeed();
+          $_SESSION['feedback']['id']=$feedId['id'];
+          $r=updateFeedbackUser($_SESSION['user']['id'],$feedId['id']);
+          if($r){
+            ?>
+            Alert.success('Thank you for your feedback!','Success',{displayDuration: 3000, pos: 'top'})
+            <?php
+          }else{
+            ?>
+            Alert.error('error','',{displayDuration: 0})
+            <?php
+          }
+        }
+}
+?>
+
+$('#homeBtn').on('click',function(){
+  window.location.href="http://localhost:8080/licenta";
+});
 </script>
 <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC0ZlrCCaEyvY7Up-rSMsrZ3NR_EGL0HMw&callback=initMap">
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDSEybUFjy07vHO-U22J4vYcrvPY5BnUuM&callback=initMap">
 </script>
 </body>
 </html>

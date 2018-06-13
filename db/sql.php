@@ -1,11 +1,6 @@
 <?php
 session_start();
 $action = isset( $_GET['action'] ) ? $_GET['action'] : "";
-$username = isset( $_SESSION['user']['username'] ) ? $_SESSION['user']['username'] : "";
-$userId = isset( $_SESSION['user']['id'] ) ? $_SESSION['user']['id'] : "";
-$tripId = isset( $_SESSION['trip']['id'] ) ? $_SESSION['trip']['id'] : "";
-$questionnareId = isset( $_SESSION['questionnare']['id'] ) ? $_SESSION['questionnare']['id'] : "";
-
 		switch($action){
 			case 'signup':{
 					$username=$_POST['signup-name'];
@@ -27,14 +22,29 @@ $questionnareId = isset( $_SESSION['questionnare']['id'] ) ? $_SESSION['question
 				        $r=getTransportMode($res['questionnare_id']);
 				        $_SESSION['transportMode']=$r['qsix'];
 						$_SESSION['user']['username']=$res['username'];
+						$_SESSION['user']['email']=$res['email'];
 				        $_SESSION['user']['id']=$res['id'];
 				        if($res['trip_id']!=0){
 				               $_SESSION['trip']['id']=$res['trip_id'];
+				               $detailsId=getDetailsId($_SESSION['user']['id']);
+							    $details=getDetails($detailsId['detailed_destinations_id']);
+							    $_SESSION['first']=selectDestination($details['detail_1']);
+								$_SESSION['second']=selectDestination($details['detail_2']);
+								$_SESSION['third']=selectDestination($details['detail_3']);
+								$_SESSION['fourth']=selectDestination($details['detail_4']);
+								$_SESSION['fifth']=selectDestination($details['detail_5']);
+
+								$types=selectTripType($detailsId['detailed_destinations_id']);
+								 $_SESSION['typeHistory']=$types['history'];
+						          $_SESSION['typeNature']=$types['nature'];
+						          $_SESSION['typeShopping']=$types['shopping'];
+						          $_SESSION['typeArt']=$types['art'];
+						          $_SESSION['typeFoodDrink']=$types['food_drink'];
 				        }
 				        if($res['questionnare_id']!=0){
 				            $_SESSION['questionnare']['id']=$res['questionnare_id'];
 				        }
-						echo $_SESSION['user']['username'];
+				        echo $_SESSION['user']['username'];
 					}else{
 						echo"error";
 					}
@@ -64,6 +74,14 @@ $questionnareId = isset( $_SESSION['questionnare']['id'] ) ? $_SESSION['question
 					          $trip=getLastTrip();
 					          $_SESSION['trip']['id']=$trip['id'];
 					          $_POST=insertTripToUser($trip['id'],$_SESSION['user']['id']);
+					          $tripTypes=insertTripTypes(5,5,1,1,1);
+					          $idTypes=getLastTripTypes();
+					          insertTripTypesToUser($idTypes['id'],$_SESSION['user']['id']);
+					          $_SESSION['typeHistory']=5;
+					          $_SESSION['typeNature']=5;
+					          $_SESSION['typeShopping']=1;
+					          $_SESSION['typeArt']=1;
+					          $_SESSION['typeFoodDrink']=1;
 					        }
 
 					        //----------------------------------------history and shopping trip----------------------------------------------------
@@ -75,6 +93,14 @@ $questionnareId = isset( $_SESSION['questionnare']['id'] ) ? $_SESSION['question
 					          $trip=getLastTrip();
 					          $_SESSION['trip']['id']=$trip['id'];
 					          $_POST=insertTripToUser($trip['id'],$_SESSION['user']['id']);
+					          $tripTypes=insertTripTypes(5,1,5,1,1);
+					          $idTypes=getLastTripTypes();
+					          insertTripTypesToUser($idTypes['id'],$_SESSION['user']['id']);
+					          $_SESSION['typeHistory']=5;
+					          $_SESSION['typeNature']=1;
+					          $_SESSION['typeShopping']=5;
+					          $_SESSION['typeArt']=1;
+					          $_SESSION['typeFoodDrink']=1;
 					        }
 
 					        //----------------------------------------history and art trip---------------------------------------------------------
@@ -86,6 +112,14 @@ $questionnareId = isset( $_SESSION['questionnare']['id'] ) ? $_SESSION['question
 					            $trip=getLastTrip();
 					            $_SESSION['trip']['id']=$trip['id'];
 					            $_POST=insertTripToUser($trip['id'],$_SESSION['user']['id']);
+					            $tripTypes=insertTripTypes(5,1,1,5,1);
+					            $idTypes=getLastTripTypes();
+					          	insertTripTypesToUser($idTypes['id'],$_SESSION['user']['id']);
+						          $_SESSION['typeHistory']=5;
+						          $_SESSION['typeNature']=1;
+						          $_SESSION['typeShopping']=1;
+						          $_SESSION['typeArt']=5;
+						          $_SESSION['typeFoodDrink']=1;
 					        }
 
 					        //----------------------------------------history and mancare&bautura trip---------------------------------------------
@@ -97,6 +131,14 @@ $questionnareId = isset( $_SESSION['questionnare']['id'] ) ? $_SESSION['question
 					            $trip=getLastTrip();
 					            $_SESSION['trip']['id']=$trip['id'];
 					            $_POST=insertTripToUser($trip['id'],$_SESSION['user']['id']);
+					            $tripTypes=insertTripTypes(5,1,1,1,5);
+					            $idTypes=getLastTripTypes();
+					          insertTripTypesToUser($idTypes['id'],$_SESSION['user']['id']);
+						          $_SESSION['typeHistory']=5;
+						          $_SESSION['typeNature']=1;
+						          $_SESSION['typeShopping']=1;
+						          $_SESSION['typeArt']=1;
+						          $_SESSION['typeFoodDrink']=5;
 					        }
 
 					         //----------------------------------------nature and shopping trip-----------------------------------------------------
@@ -108,6 +150,14 @@ $questionnareId = isset( $_SESSION['questionnare']['id'] ) ? $_SESSION['question
 					          $trip=getLastTrip();
 					          $_SESSION['trip']['id']=$trip['id'];
 					          $_POST=insertTripToUser($trip['id'],$_SESSION['user']['id']);
+					          $tripTypes=insertTripTypes(1,5,5,1,1);
+					          $idTypes=getLastTripTypes();
+					          insertTripTypesToUser($idTypes['id'],$_SESSION['user']['id']);
+					          $_SESSION['typeHistory']=1;
+					          $_SESSION['typeNature']=5;
+					          $_SESSION['typeShopping']=5;
+					          $_SESSION['typeArt']=1;
+					          $_SESSION['typeFoodDrink']=1;
 					        }
 
 					        //----------------------------------------nature and art trip----------------------------------------------------------
@@ -119,6 +169,14 @@ $questionnareId = isset( $_SESSION['questionnare']['id'] ) ? $_SESSION['question
 					            $trip=getLastTrip();
 					            $_SESSION['trip']['id']=$trip['id'];
 					            $_POST=insertTripToUser($trip['id'],$_SESSION['user']['id']);
+					            $tripTypes=insertTripTypes(1,5,1,5,1);
+					            $idTypes=getLastTripTypes();
+					          insertTripTypesToUser($idTypes['id'],$_SESSION['user']['id']);
+					          $_SESSION['typeHistory']=1;
+					          $_SESSION['typeNature']=5;
+					          $_SESSION['typeShopping']=1;
+					          $_SESSION['typeArt']=5;
+					          $_SESSION['typeFoodDrink']=1;
 					        }
 
 					        //----------------------------------------nature and mancare&bautura trip----------------------------------------------
@@ -130,6 +188,14 @@ $questionnareId = isset( $_SESSION['questionnare']['id'] ) ? $_SESSION['question
 					            $trip=getLastTrip();
 					            $_SESSION['trip']['id']=$trip['id'];
 					            $_POST=insertTripToUser($trip['id'],$_SESSION['user']['id']);
+					            $tripTypes=insertTripTypes(1,5,1,1,5);
+					            $idTypes=getLastTripTypes();
+					          insertTripTypesToUser($idTypes['id'],$_SESSION['user']['id']);
+					          $_SESSION['typeHistory']=1;
+					          $_SESSION['typeNature']=5;
+					          $_SESSION['typeShopping']=1;
+					          $_SESSION['typeArt']=1;
+					          $_SESSION['typeFoodDrink']=5;
 					        }
 
 					        //----------------------------------------shopping and art trip--------------------------------------------------------
@@ -140,6 +206,14 @@ $questionnareId = isset( $_SESSION['questionnare']['id'] ) ? $_SESSION['question
 					            $trip=getLastTrip();
 					            $_SESSION['trip']['id']=$trip['id'];
 					            $_POST=insertTripToUser($trip['id'],$_SESSION['user']['id']);
+					            $tripTypes=insertTripTypes(1,1,5,5,1);
+					            $idTypes=getLastTripTypes();
+					          insertTripTypesToUser($idTypes['id'],$_SESSION['user']['id']);
+					          $_SESSION['typeHistory']=1;
+					          $_SESSION['typeNature']=1;
+					          $_SESSION['typeShopping']=5;
+					          $_SESSION['typeArt']=5;
+					          $_SESSION['typeFoodDrink']=1;
 					        }
 
 					        //----------------------------------------shopping and mancare&bautura trip--------------------------------------------
@@ -150,6 +224,32 @@ $questionnareId = isset( $_SESSION['questionnare']['id'] ) ? $_SESSION['question
 					            $trip=getLastTrip();
 					            $_SESSION['trip']['id']=$trip['id'];
 					            $_POST=insertTripToUser($trip['id'],$_SESSION['user']['id']);
+					            $tripTypes=insertTripTypes(1,1,5,1,5);
+					            $idTypes=getLastTripTypes();
+					          insertTripTypesToUser($idTypes['id'],$_SESSION['user']['id']);
+					          $_SESSION['typeHistory']=1;
+					          $_SESSION['typeNature']=1;
+					          $_SESSION['typeShopping']=5;
+					          $_SESSION['typeArt']=1;
+					          $_SESSION['typeFoodDrink']=5;
+					        }
+
+					        //------------------------------------------art and mancare&bautura trip-------------------------------------------------
+					        else if(($_POST['one']=='art galleries' || $_POST['one']=='have a culinary experience') && ($_POST['three']=='withoutHurry' || $_POST['three']=='unorganized' || $_POST['three']=='organized') && $_POST['two']=='books'){
+					            $type1=4;
+					            $type2=5;
+					            $_POSTes=createTrip($type1,$type2,0);
+					            $trip=getLastTrip();
+					            $_SESSION['trip']['id']=$trip['id'];
+					            $_POST=insertTripToUser($trip['id'],$_SESSION['user']['id']);
+					            $tripTypes=insertTripTypes(1,1,1,5,5);
+					            $idTypes=getLastTripTypes();
+					          insertTripTypesToUser($idTypes['id'],$_SESSION['user']['id']);
+					          $_SESSION['typeHistory']=1;
+					          $_SESSION['typeNature']=1;
+					          $_SESSION['typeShopping']=1;
+					          $_SESSION['typeArt']=5;
+					          $_SESSION['typeFoodDrink']=5;
 					        }
 
 					        //------------------------------------------history and nature and shopping trip----------------------------------------
@@ -162,6 +262,14 @@ $questionnareId = isset( $_SESSION['questionnare']['id'] ) ? $_SESSION['question
 					          $trip=getLastTrip();
 					          $_SESSION['trip']['id']=$trip['id'];
 					          $_POST=insertTripToUser($trip['id'],$_SESSION['user']['id']);
+					          $tripTypes=insertTripTypes(4,4,4,1,1);
+					          $idTypes=getLastTripTypes();
+					          insertTripTypesToUser($idTypes['id'],$_SESSION['user']['id']);
+					          $_SESSION['typeHistory']=4;
+					          $_SESSION['typeNature']=4;
+					          $_SESSION['typeShopping']=4;
+					          $_SESSION['typeArt']=1;
+					          $_SESSION['typeFoodDrink']=1;
 					        }
 
 					        //-----------------------------------------history and nature and art trip----------------------------------------------
@@ -174,6 +282,14 @@ $questionnareId = isset( $_SESSION['questionnare']['id'] ) ? $_SESSION['question
 					          $trip=getLastTrip();
 					          $_SESSION['trip']['id']=$trip['id'];
 					          $_POST=insertTripToUser($trip['id'],$_SESSION['user']['id']);
+					          $tripTypes=insertTripTypes(4,4,1,4,1);
+					          $idTypes=getLastTripTypes();
+					          insertTripTypesToUser($idTypes['id'],$_SESSION['user']['id']);
+					          $_SESSION['typeHistory']=4;
+					          $_SESSION['typeNature']=4;
+					          $_SESSION['typeShopping']=1;
+					          $_SESSION['typeArt']=4;
+					          $_SESSION['typeFoodDrink']=1;
 					        }
 
 					        //-----------------------------------------history and nature and mancare&bautura trip----------------------------------
@@ -186,6 +302,14 @@ $questionnareId = isset( $_SESSION['questionnare']['id'] ) ? $_SESSION['question
 					          $trip=getLastTrip();
 					          $_SESSION['trip']['id']=$trip['id'];
 					          $_POST=insertTripToUser($trip['id'],$_SESSION['user']['id']);
+					          $tripTypes=insertTripTypes(4,4,1,1,4);
+					          $idTypes=getLastTripTypes();
+					          insertTripTypesToUser($idTypes['id'],$_SESSION['user']['id']);
+					          $_SESSION['typeHistory']=4;
+					          $_SESSION['typeNature']=4;
+					          $_SESSION['typeShopping']=1;
+					          $_SESSION['typeArt']=1;
+					          $_SESSION['typeFoodDrink']=4;
 					        }
 
 					        //-----------------------------------------nature and shopping and art trip---------------------------------------------
@@ -198,6 +322,14 @@ $questionnareId = isset( $_SESSION['questionnare']['id'] ) ? $_SESSION['question
 					          $trip=getLastTrip();
 					          $_SESSION['trip']['id']=$trip['id'];
 					          $_POST=insertTripToUser($trip['id'],$_SESSION['user']['id']);
+					          $tripTypes=insertTripTypes(1,4,4,4,1);
+					          $idTypes=getLastTripTypes();
+					          insertTripTypesToUser($idTypes['id'],$_SESSION['user']['id']);
+					          $_SESSION['typeHistory']=1;
+					          $_SESSION['typeNature']=4;
+					          $_SESSION['typeShopping']=4;
+					          $_SESSION['typeArt']=4;
+					          $_SESSION['typeFoodDrink']=1;
 					        }
 
 					        //-----------------------------------------nature and shopping and mancare&bautura trip---------------------------------
@@ -210,6 +342,14 @@ $questionnareId = isset( $_SESSION['questionnare']['id'] ) ? $_SESSION['question
 					          $trip=getLastTrip();
 					          $_SESSION['trip']['id']=$trip['id'];
 					          $_POST=insertTripToUser($trip['id'],$_SESSION['user']['id']);
+					          $tripTypes=insertTripTypes(1,4,4,1,4);
+					          $idTypes=getLastTripTypes();
+					          insertTripTypesToUser($idTypes['id'],$_SESSION['user']['id']);
+					          $_SESSION['typeHistory']=1;
+					          $_SESSION['typeNature']=4;
+					          $_SESSION['typeShopping']=4;
+					          $_SESSION['typeArt']=1;
+					          $_SESSION['typeFoodDrink']=4;
 					        }
 
 					        //-----------------------------------------shopping and arta and mancare&bautura trip-----------------------------------
@@ -222,6 +362,14 @@ $questionnareId = isset( $_SESSION['questionnare']['id'] ) ? $_SESSION['question
 					            $trip=getLastTrip();
 					            $_SESSION['trip']['id']=$trip['id'];
 					            $_POST=insertTripToUser($trip['id'],$_SESSION['user']['id']);
+					            $tripTypes=insertTripTypes(1,1,4,4,4);
+					            $idTypes=getLastTripTypes();
+					          insertTripTypesToUser($idTypes['id'],$_SESSION['user']['id']);
+					          $_SESSION['typeHistory']=1;
+					          $_SESSION['typeNature']=1;
+					          $_SESSION['typeShopping']=4;
+					          $_SESSION['typeArt']=4;
+					          $_SESSION['typeFoodDrink']=4;
 					        }
 
 
@@ -230,6 +378,14 @@ $questionnareId = isset( $_SESSION['questionnare']['id'] ) ? $_SESSION['question
 					            $trip=getLastTrip();
 					            $_SESSION['trip']['id']=$trip['id'];
 					            $_POST=insertTripToUser($trip['id'],$_SESSION['user']['id']);
+					            $tripTypes=insertTripTypes(4,4,4,1,1);
+					            $idTypes=getLastTripTypes();
+					          insertTripTypesToUser($idTypes['id'],$_SESSION['user']['id']);
+					          $_SESSION['typeHistory']=4;
+					          $_SESSION['typeNature']=4;
+					          $_SESSION['typeShopping']=4;
+					          $_SESSION['typeArt']=1;
+					          $_SESSION['typeFoodDrink']=1;
 					        }
 
 					        //----------------------------------------------------------------------3trips-----------------------------------------------
@@ -259,11 +415,11 @@ $questionnareId = isset( $_SESSION['questionnare']['id'] ) ? $_SESSION['question
 				    $update=updateDatailsToUser($_SESSION['user']['id'],$_SESSION['details']['id']);
 				    $detailsId=getDetailsId($_SESSION['user']['id']);
 				    $res=getDetails($detailsId['detailed_destinations_id']);
-				    $_SESSION['first']=selectDestination($res['first']);
-					$_SESSION['second']=selectDestination($res['second']);
-					$_SESSION['third']=selectDestination($res['third']);
-					$_SESSION['fourth']=selectDestination($res['fourth']);
-					$_SESSION['fifth']=selectDestination($res['fifth']);
+				    $_SESSION['first']=selectDestination($res['detail_1']);
+					$_SESSION['second']=selectDestination($res['detail_2']);
+					$_SESSION['third']=selectDestination($res['detail_3']);
+					$_SESSION['fourth']=selectDestination($res['detail_4']);
+					$_SESSION['fifth']=selectDestination($res['detail_5']);
 				    echo "succes"; 
 			    }else{
 			      	echo "error";
@@ -290,11 +446,11 @@ $questionnareId = isset( $_SESSION['questionnare']['id'] ) ? $_SESSION['question
 			    $update=updateDatailsToUser($_SESSION['user']['id'],$_SESSION['details']['id']);
 			    $detailsId=getDetailsId($_SESSION['user']['id']);
 			    $res=getDetails($detailsId['detailed_destinations_id']);
-			    $_SESSION['first']=selectDestination($res['first']);
-				$_SESSION['second']=selectDestination($res['second']);
-				$_SESSION['third']=selectDestination($res['third']);
-				$_SESSION['fourth']=selectDestination($res['fourth']);
-				$_SESSION['fifth']=selectDestination($res['fifth']);
+			    $_SESSION['first']=selectDestination($res['detail_1']);
+				$_SESSION['second']=selectDestination($res['detail_2']);
+				$_SESSION['third']=selectDestination($res['detail_3']);
+				$_SESSION['fourth']=selectDestination($res['detail_4']);
+				$_SESSION['fifth']=selectDestination($res['detail_5']);
 			    echo "succes"; 
 			    }else{
 			      echo "error";
@@ -311,18 +467,17 @@ $questionnareId = isset( $_SESSION['questionnare']['id'] ) ? $_SESSION['question
 			    }
 			    $res=insertDetails($lowestDest[0],$lowestDest[1],$lowestDest[2],$lowestDest[3],$lowestDest[4]);
 			    if($res){
-
 			    $lastDetails=getLastDetails();
 			    $_SESSION['details']['id']=$lastDetails['id'];
 			    $update=updateDatailsToUser($_SESSION['user']['id'],$_SESSION['details']['id']);
-
-			     $detailsId=getDetailsId($_SESSION['user']['id']);
+			    $detailsId=getDetailsId($_SESSION['user']['id']);
 			    $res=getDetails($detailsId['detailed_destinations_id']);
-			    $_SESSION['first']=selectDestination($res['first']);
-				$_SESSION['second']=selectDestination($res['second']);
-				$_SESSION['third']=selectDestination($res['third']);
-				$_SESSION['fourth']=selectDestination($res['fourth']);
-				$_SESSION['fifth']=selectDestination($res['fifth']);
+			    $_SESSION['first']=selectDestination($res['detail_1']);
+				$_SESSION['second']=selectDestination($res['detail_2']);
+				$_SESSION['third']=selectDestination($res['detail_3']);
+				$_SESSION['fourth']=selectDestination($res['detail_4']);
+				$_SESSION['fifth']=selectDestination($res['detail_5']);
+
 			    echo "succes"; 
 			    }else{
 			      echo "error";
@@ -330,134 +485,241 @@ $questionnareId = isset( $_SESSION['questionnare']['id'] ) ? $_SESSION['question
 			   
 				break;
 			}
-			case 'feedback': {
-				$starOne=0;
-				$starTwo=0;
-				$starThree=0;
-				$starFour=0;
-				$starFive=0;
-				$imgOne="";
-				$imgTwo="";
-				$imgThree="";
-				$imgFour="";
-				$imgFive="";
-
-				if(isset($_POST['starone'])){
-					$starone=$_POST['starone'];
-					 echo "<script>console.log( 'Debug Objects: " . $starone . "' );</script>";
+			case 'preferences': {
+				$history=1;
+				$nature=1;
+				$shopping=1;
+				$art=1;
+				$food_drink=1;
+				if(isset($_POST['rangeOne'])){
+					$history=$_POST['rangeOne']/10;
 				}
-				if(isset($_POST['startwo'])){
-					$starone=$_POST['startwo'];
+				if(isset($_POST['rangeTwo'])){
+					$nature=$_POST['rangeTwo']/10;
 				}
-				if(isset($_POST['starthree'])){
-					$starone=$_POST['starthree'];
+				if(isset($_POST['rangeThree'])){
+					$shopping=$_POST['rangeThree']/10;
 				}
-				if(isset($_POST['starfour'])){
-					$starone=$_POST['starfour'];
+				if(isset($_POST['rangeFour'])){
+					$art=$_POST['rangeFour']/10;
 				}
-				if(isset($_POST['starfive'])){
-					$starone=$_POST['starfive'];
+				if(isset($_POST['rangeFive'])){
+					$food_drink=$_POST['rangeFive']/10;
 				}
-				if(isset($_FILES['imgOne'])){
-					if($_FILES['imgOne']['error']==0){
-	            		switch ($_FILES['imgOne']['type']) {
-				                case 'image/jpg':
-				                case 'image/jpeg':
-				                case 'image/png':
-				                case 'image/gif':
-				                    $imgOne= uniqid().$_FILES['imgOne']['name'];
-				                    $r= move_uploaded_file($_FILES['imgOne']['tmp_name'], 'http://localhost:8080/licenta/images/uploaded/'.$imgOne);
-				                    break;
-
-				                default:
-				                    print 'tip necunoscut';
-				                    break;
-				            }
-				        }
-				}
-				if(isset($_FILES['imgTwo'])){
-					if($_FILES['imgTwo']['error']==0){
-	            		switch ($_FILES['imgTwo']['type']) {
-				                case 'image/jpg':
-				                case 'image/jpeg':
-				                case 'image/png':
-				                case 'image/gif':
-				                    $imgTwo= uniqid().$_FILES['imgTwo']['name'];
-				                    $r= move_uploaded_file($_FILES['imgTwo']['tmp_name'], 'http://localhost:8080/licenta/images/uploaded/'.$imgTwo);
-				                    break;
-
-				                default:
-				                    print 'tip necunoscut';
-				                    break;
-				            }
-				        }
-				}
-				if(isset($_FILES['imgThree'])){
-					if($_FILES['imgThree']['error']==0){
-	            		switch ($_FILES['imgThree']['type']) {
-				                case 'image/jpg':
-				                case 'image/jpeg':
-				                case 'image/png':
-				                case 'image/gif':
-				                    $imgThree= uniqid().$_FILES['imgThree']['name'];
-				                    $r= move_uploaded_file($_FILES['imgThree']['tmp_name'], 'http://localhost:8080/licenta/images/uploaded/'.$imgThree);
-				                    break;
-
-				                default:
-				                    print 'tip necunoscut';
-				                    break;
-				            }
-				        }
-				}
-				if(isset($_FILES['imgFour'])){
-					if($_FILES['imgFour']['error']==0){
-	            		switch ($_FILES['imgFour']['type']) {
-				                case 'image/jpg':
-				                case 'image/jpeg':
-				                case 'image/png':
-				                case 'image/gif':
-				                    $imgFour= uniqid().$_FILES['imgFour']['name'];
-				                    $r= move_uploaded_file($_FILES['imgFour']['tmp_name'], 'http://localhost:8080/licenta/images/uploaded/'.$imgFour);
-				                    break;
-
-				                default:
-				                    print 'tip necunoscut';
-				                    break;
-				            }
-				        }
-				}
-				if(isset($_FILES['imgFive'])){
-					if($_FILES['imgFive']['error']==0){
-	            		switch ($_FILES['imgFive']['type']) {
-				                case 'image/jpg':
-				                case 'image/jpeg':
-				                case 'image/png':
-				                case 'image/gif':
-				                    $imgFive= uniqid().$_FILES['imgFive']['name'];
-				                    $r= move_uploaded_file($_FILES['imgFive']['tmp_name'], 'http://localhost:8080/licenta/images/uploaded/'.$imgFive);
-				                    break;
-
-				                default:
-				                    print 'tip necunoscut';
-				                    break;
-				            }
-				        }
+				$res=insertTripTypes($history,$nature,$shopping,$art,$food_drink);
+				$idTypes=getLastTripTypes();
+				insertTripTypesToUser($idTypes['id'],$_SESSION['user']['id']);
+				$_SESSION['typeHistory']=$history;
+		        $_SESSION['typeNature']=$nature;
+		        $_SESSION['typeShopping']=$shopping;
+		        $_SESSION['typeArt']=$art;
+		        $_SESSION['typeFoodDrink']=$food_drink;
+				//-----------------------------------------history and nature trip-----------------------------------------------------
+				if(($history>=4) && ($nature>=4)){
+					 $type1=1;
+			          $type2=2;
+			          $_POSTes=createTrip($type1,$type2,0);
+			          $trip=getLastTrip();
+			          $_SESSION['trip']['id']=$trip['id'];
+			          $_POST=insertTripToUser($trip['id'],$_SESSION['user']['id']);
 				}
 
-				$res=insertFeedback($imgOne,$imgTwo,$imgThree,$imgFour,$imgFive,$starOne,$starTwo,$starThree,$starFour,$starFive);
-				if($res){
-					$feedId=getLastFeed();
-					$r=updateFeedbackUser($_SESSION['user']['id'],$feedId);
-					if($r){
-						echo "succes";
-					}else{
-						echo "error";
-					}
+				//----------------------------------------history and shopping trip----------------------------------------------------
+				else if(($history>=4) && ($shopping>=4)){
+					$type1=1;
+		          $type2=3;
+		          $_POSTes=createTrip($type1,$type2,0);
+		          $trip=getLastTrip();
+		          $_SESSION['trip']['id']=$trip['id'];
+		          $_POST=insertTripToUser($trip['id'],$_SESSION['user']['id']);
+
+				}
+				//----------------------------------------history and art trip---------------------------------------------------------
+				else if(($history>=4) && ($art>=4)){
+					 $type1=1;
+		            $type2=4;
+		            $_POSTes=createTrip($type1,$type2,0);
+		            $trip=getLastTrip();
+		            $_SESSION['trip']['id']=$trip['id'];
+		            $_POST=insertTripToUser($trip['id'],$_SESSION['user']['id']);
+
+				}
+				//----------------------------------------history and mancare&bautura trip---------------------------------------------
+				else if(($history>=4) && ($food_drink>=4)){
+					$type1=1;
+		            $type2=5;
+		            $_POSTes=createTrip($type1,$type2,0);
+		            $trip=getLastTrip();
+		            $_SESSION['trip']['id']=$trip['id'];
+		            $_POST=insertTripToUser($trip['id'],$_SESSION['user']['id']);
+				}
+				 //----------------------------------------nature and shopping trip-----------------------------------------------------
+				else if(($nature>=4) && ($shopping>=4)){
+					 $type1=2;
+		          	  $type2=3;
+			          $_POSTes=createTrip($type1,$type2,0);
+			          $trip=getLastTrip();
+			          $_SESSION['trip']['id']=$trip['id'];
+			          $_POST=insertTripToUser($trip['id'],$_SESSION['user']['id']);
+
+				}
+				
+				//----------------------------------------nature and art trip----------------------------------------------------------
+
+				else if(($nature>=4) && ($art>=4)){
+					$type1=2;
+		            $type2=4;
+		            $_POSTes=createTrip($type1,$type2,0);
+		            $trip=getLastTrip();
+		            $_SESSION['trip']['id']=$trip['id'];
+		            $_POST=insertTripToUser($trip['id'],$_SESSION['user']['id']);
 				}
 
+				 //----------------------------------------nature and mancare&bautura trip----------------------------------------------
+				else if(($nature>=4) && ($food_drink>=4)){
+					$type1=2;
+		            $type2=5;
+		            $_POSTes=createTrip($type1,$type2,0);
+		            $trip=getLastTrip();
+		            $_SESSION['trip']['id']=$trip['id'];
+		            $_POST=insertTripToUser($trip['id'],$_SESSION['user']['id']);
+
+				}
+				//----------------------------------------shopping and art trip--------------------------------------------------------
+				else if(($shopping>=4) && ($art>=4)){
+					 $type1=3;
+		            $type2=4;
+		            $_POSTes=createTrip($type1,$type2,0);
+		            $trip=getLastTrip();
+		            $_SESSION['trip']['id']=$trip['id'];
+		            $_POST=insertTripToUser($trip['id'],$_SESSION['user']['id']);
+				}
+				 //----------------------------------------shopping and mancare&bautura trip--------------------------------------------
+				else if(($shopping>=4) && ($food_drink>=4)){
+					$type1=3;
+		            $type2=5;
+		            $_POSTes=createTrip($type1,$type2,0);
+		            $trip=getLastTrip();
+		            $_SESSION['trip']['id']=$trip['id'];
+		            $_POST=insertTripToUser($trip['id'],$_SESSION['user']['id']);
+
+				}
+
+				//------------------------------------------art and mancare&bautura trip-------------------------------------------------
+				else if(($art>=4) && ($food_drink>=4)){
+					$type1=4;
+		            $type2=5;
+		            $_POSTes=createTrip($type1,$type2,0);
+		            $trip=getLastTrip();
+		            $_SESSION['trip']['id']=$trip['id'];
+		            $_POST=insertTripToUser($trip['id'],$_SESSION['user']['id']);
+
+				}
+
+				//------------------------------------------history and nature and shopping trip----------------------------------------
+				else if(($history>=4) && ($nature>=4) && ($shopping>=4)){
+					$type1=1;
+			          $type2=2;
+			          $type3=3;
+			          $_POSTes=createTrip($type1,$type2,$type3);
+			          $trip=getLastTrip();
+			          $_SESSION['trip']['id']=$trip['id'];
+			          $_POST=insertTripToUser($trip['id'],$_SESSION['user']['id']);
+				}
+				 //-----------------------------------------history and nature and art trip----------------------------------------------
+				
+				else if(($history>=4) && ($nature>=4) && ($art>=4)){
+					$type1=1;
+		          $type2=2;
+		          $type3=4;
+		          $_POSTes=createTrip($type1,$type2,$type3);
+		          $trip=getLastTrip();
+		          $_SESSION['trip']['id']=$trip['id'];
+		          $_POST=insertTripToUser($trip['id'],$_SESSION['user']['id']);
+
+				}
+				//-----------------------------------------history and nature and mancare&bautura trip----------------------------------
+				else if(($history>=4) && ($nature>=4) && ($food_drink>=4)){
+					 $type1=1;
+			          $type2=2;
+			          $type3=5;
+			          $_POSTes=createTrip($type1,$type2,$type3);
+			          $trip=getLastTrip();
+			          $_SESSION['trip']['id']=$trip['id'];
+			          $_POST=insertTripToUser($trip['id'],$_SESSION['user']['id']);
+
+				}
+				//-----------------------------------------nature and shopping and art trip---------------------------------------------
+				else if(($nature>=4) && ($shopping>=4) && ($art>=4)){
+					$type1=2;
+			          $type2=3;
+			          $type3=4;
+			          $_POSTes=createTrip($type1,$type2,$type3);
+			          $trip=getLastTrip();
+			          $_SESSION['trip']['id']=$trip['id'];
+			          $_POST=insertTripToUser($trip['id'],$_SESSION['user']['id']);
+
+				}
+				//-----------------------------------------nature and shopping and mancare&bautura trip---------------------------------
+				else if(($nature>=4) && ($shopping>=4) && ($food_drink>=4)){
+				$type1=2;
+		          $type2=3;
+		          $type3=5;
+		          $_POSTes=createTrip($type1,$type2,$type3);
+		          $trip=getLastTrip();
+		          $_SESSION['trip']['id']=$trip['id'];
+		          $_POST=insertTripToUser($trip['id'],$_SESSION['user']['id']);
+				}
+
+				//-----------------------------------------shopping and arta and mancare&bautura trip-----------------------------------
+				else if(($shopping>=4) && ($art>=4) && ($food_drink>=4)){
+					$type1=3;
+		            $type2=4;
+		            $type3=5;
+		            $_POSTes=createTrip($type1,$type2,$type3);
+		            $trip=getLastTrip();
+		            $_SESSION['trip']['id']=$trip['id'];
+		            $_POST=insertTripToUser($trip['id'],$_SESSION['user']['id']);
+
+				}
+				//history nature shopping
+				else{
+					$_POSTes=createTrip(1,2,3);
+		            $trip=getLastTrip();
+		            $_SESSION['trip']['id']=$trip['id'];
+		            $_POST=insertTripToUser($trip['id'],$_SESSION['user']['id']);
+				}
+				$trip=getTrip($_SESSION['trip']['id']);
+			    $lowestDest=array();
+			    $firstTripDestinations=getLowestDestinations($trip['typeOne'],$trip['typeTwo'],$trip['typeThree']);
+			    foreach($firstTripDestinations as $t){
+			      array_push($lowestDest, $t['destination_id']);
+			    }
+			    $res=insertDetails($lowestDest[0],$lowestDest[1],$lowestDest[2],$lowestDest[3],$lowestDest[4]);
+			    if($res){
+				    $lastDetails=getLastDetails();
+				    $_SESSION['details']['id']=$lastDetails['id'];
+				    $update=updateDatailsToUser($_SESSION['user']['id'],$_SESSION['details']['id']);
+				    $detailsId=getDetailsId($_SESSION['user']['id']);
+				    $res=getDetails($detailsId['detailed_destinations_id']);
+				    $_SESSION['first']=selectDestination($res['detail_1']);
+					$_SESSION['second']=selectDestination($res['detail_2']);
+					$_SESSION['third']=selectDestination($res['detail_3']);
+					$_SESSION['fourth']=selectDestination($res['detail_4']);
+					$_SESSION['fifth']=selectDestination($res['detail_5']);
+				}
+				header("location: http://localhost:8080/licenta/detailedTrip.php");
 				break;
 			}
-			
+			case 'userProfile':{
+				$res=updateUserInfo($_SESSION['user']['id'], $_POST['userName'], $_POST['userEmail'], $_POST['userPassword']);
+				if($res){
+					echo "success";
+				} else{
+					echo "error";
+				}
+				break;
+			}
 			}
 	
 
@@ -547,7 +809,12 @@ function logout(){
 
 
 //---------------------------------------------------------questionnare functions--------------------------------------
-
+function getQuestionnare($id){
+	$link= conectare_db();
+  $query="select * from questionnare where id='$id'";
+   $res=mysqli_query($link, $query);
+  return mysqli_fetch_array($res);
+}
 function inserareQuestionnare($input,$id){
    $link= conectare_db();
   $query="update users set questionnare_id='$input' where id='$id'";
@@ -599,6 +866,7 @@ function getTrip($id){
    $res=mysqli_query($link, $query);
   return mysqli_fetch_array($res);
 }
+
 function getLowestDestinations($type1,$type2,$type3){
   $link= conectare_db();
   $query="select * from destinations where destination_type='$type1' or destination_type='$type2' or destination_type='$type3' order by destination_price asc limit 5";
@@ -628,9 +896,11 @@ function getHighestDestinations($type1,$type2,$type3){
   }
 }
 
+//details functions
+
 function insertDetails($first,$second,$third,$fourth,$fifth){
   $link= conectare_db();
-  $query="insert into detailed_destinations(first,second,third,fourth,fifth) values('$first','$second','$third','$fourth','$fifth')";
+  $query="insert into detailed_destinations(detail_1,detail_2,detail_3,detail_4,detail_5) values('$first','$second','$third','$fourth','$fifth')";
   return mysqli_query($link, $query);
 }
 function getLastDetails(){
@@ -667,10 +937,10 @@ function updateFeedbackUser($user,$id){
 }
 
 function getDetails($id){
-$link= conectare_db();
-  $query="select * from detailed_destinations where id='$id'";
-   $res=mysqli_query($link, $query);
-  return mysqli_fetch_array($res);
+	$link= conectare_db();
+  	$query="select * from detailed_destinations where id='$id'";
+  	$res=mysqli_query($link, $query);
+  	return mysqli_fetch_array($res);
 }
 function selectDestination($id){
   $link= conectare_db();
@@ -684,3 +954,87 @@ function getDetailsId($id){
    $res=mysqli_query($link, $query);
   return mysqli_fetch_array($res);
 }
+function getCityDetails($id){
+  $link= conectare_db();
+  $query="select * from city_details where details_section='$id'";
+  $res=mysqli_query($link, $query);
+  return mysqli_fetch_array($res);
+}
+function updateDestinationStars($id, $stars){
+	$link= conectare_db();
+  $query="update destinations set destination_stars='$stars' where destination_id='$id'";
+  return mysqli_query($link, $query);
+}
+function getLastStars($id){
+  $link= conectare_db();
+  $query="select * from destinations where destination_id='$id'";
+  $res=mysqli_query($link, $query);
+  return mysqli_fetch_array($res);
+}
+
+function selectBestRatedDestinations(){
+	$link= conectare_db();
+  $query="select * from destinations where destination_stars>4 limit 5";
+  $res=mysqli_query($link, $query);
+  $vector=array();
+    while ($r=mysqli_fetch_array($res)){
+        array_push($vector, $r);
+    }
+    return $vector;
+}
+
+function getAllDestinations(){
+$link=conectare_db();
+	$query="select * from destinations";
+	$res=mysqli_query($link, $query);
+  $vector=array();
+    while ($r=mysqli_fetch_array($res)){
+        array_push($vector, $r);
+    }
+    return $vector;
+}
+//preferences functions
+
+function insertTripTypes($history,$nature,$shopping,$art,$food_drink){
+	$link= conectare_db();
+	$query="insert into trip_types(history,nature,shopping,art,food_drink) values('$history','$nature','$shopping','$art','$food_drink')";
+	return mysqli_query($link, $query);
+}
+
+function updateTripTypeUser($id,$typeId){
+	$link= conectare_db();
+  $query="update users set trip_types_id='$typeId' where id='$id'";
+  return mysqli_query($link, $query);
+}
+
+function selectTripType($id){
+	$link= conectare_db();
+  $query="select * from trip_types where id='$id'";
+  $res=mysqli_query($link, $query);
+  return mysqli_fetch_array($res);
+}
+
+function getLastTripTypes(){
+  $link= conectare_db();
+  $query="select id from trip_types order by id desc limit 1";
+  $res=mysqli_query($link, $query);
+  return mysqli_fetch_assoc($res);
+}
+
+function insertTripTypesToUser($input,$id){
+  $link= conectare_db();
+  $query="update users set trip_types_id='$input' where id='$id'";
+  return mysqli_query($link,$query);
+}
+
+//---------------------------------change user account
+
+function updateUserInfo($id, $username, $email, $password){
+	$link=conectare_db();
+	$password=md5($password);
+	$query="update users set username='$username', email='$email', password='$password' where id='$id'";
+	return mysqli_query($link,$query);
+}
+
+
+

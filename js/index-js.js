@@ -106,3 +106,176 @@ function showDropdown(event){
   }
 });
 }
+
+
+//-----------------------------------alerts------------------------------------------
+
+var Alert = undefined;
+
+(function(Alert) {
+  var alert, error, info, success, warning, _container;
+  info = function(message, title, options) {
+    return alert("info", message, title, "icon-info-sign", options);
+  };
+  warning = function(message, title, options) {
+    return alert("warning", message, title, "icon-warning-sign", options);
+  };
+  error = function(message, title, options) {
+    return alert("error", message, title, "icon-minus-sign", options);
+  };
+  success = function(message, title, options) {
+    return alert("success", message, title, "icon-ok-sign", options);
+  };
+  alert = function(type, message, title, icon, options) {
+    var alertElem, messageElem, titleElem, iconElem, innerElem, _container;
+    if (typeof options === "undefined") {
+      options = {};
+    }
+    options = $.extend({}, Alert.defaults, options);
+    if (!_container) {
+      _container = $("#alerts");
+      if (_container.length === 0) {
+        _container = $("<ul>").attr("id", "alerts").appendTo($("body"));
+      }
+    }
+    if (options.width) {
+      _container.css({
+        width: options.width
+      });
+    }
+      alertElem = $("<li>").addClass("alert").addClass("alert-" + type);
+      setTimeout(function() {
+         alertElem.addClass('open');
+      }, 1);
+    if (icon) {
+      iconElem = $("<i>").addClass(icon);
+      alertElem.append(iconElem);
+    }
+    innerElem = $("<div>").addClass("alert-block");
+    alertElem.append(innerElem);
+    if (title) {
+      titleElem = $("<div>").addClass("alert-title").append(title);
+      innerElem.append(titleElem);
+    }
+    if (message) {
+      messageElem = $("<div>").addClass("alert-message").append(message);
+      innerElem.append(messageElem);
+    }
+    if (options.displayDuration > 0) {
+      setTimeout((function() {
+        leave();
+      }), options.displayDuration);
+    } else {
+      innerElem.append("<em>Click to Dismiss</em>");
+    }
+    alertElem.on("click", function() {
+      leave();
+    });
+     function leave() {
+         alertElem.removeClass('open');
+          alertElem.one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend',  function() { return alertElem.remove(); });
+    }
+    return _container.prepend(alertElem);
+  };
+  Alert.defaults = {
+    width: "",
+    icon: "",
+    displayDuration: 3000,
+    pos: ""
+  };
+  Alert.info = info;
+  Alert.warning = warning;
+  Alert.error = error;
+  Alert.success = success;
+  return _container = void 0;
+    
+   
+})(Alert || (Alert = {}));
+
+this.Alert = Alert;
+
+$('#test').on('click', function() {
+  Alert.info('Message');
+  });
+
+
+$(document).ready(function() {
+  
+  var scrollLink = $('.scroll');
+  
+  // Smooth scrolling
+  scrollLink.click(function(e) {
+    e.preventDefault();
+    $('body,html').animate({
+      scrollTop: $(this.hash).offset().top
+    }, 1000 );
+  });
+  
+  // Active link switching
+  $(window).scroll(function() {
+    var scrollbarLocation = $(this).scrollTop();
+    
+    scrollLink.each(function() {
+      
+      var sectionOffset = $(this.hash).offset().top - 20;
+      
+      if ( sectionOffset <= scrollbarLocation ) {
+        $(this).parent().addClass('active');
+        $(this).parent().siblings().removeClass('active');
+      }
+    })
+    
+  })
+  
+})
+
+
+AOS.init({
+  duration: 1200,
+})
+
+
+$(function() {
+
+  var polar_to_cartesian, svg_circle_arc_path, animate_arc;
+
+  polar_to_cartesian = function(cx, cy, radius, angle) {
+    var radians;
+    radians = (angle - 90) * Math.PI / 180.0;
+    return [Math.round((cx + (radius * Math.cos(radians))) * 100) / 100, Math.round((cy + (radius * Math.sin(radians))) * 100) / 100];
+  };
+
+  svg_circle_arc_path = function(x, y, radius, start_angle, end_angle) {
+    var end_xy, start_xy;
+    start_xy = polar_to_cartesian(x, y, radius, end_angle);
+    end_xy = polar_to_cartesian(x, y, radius, start_angle);
+    return "M " + start_xy[0] + " " + start_xy[1] + " A " + radius + " " + radius + " 0 0 0 " + end_xy[0] + " " + end_xy[1];
+  };
+
+  animate_arc = function(ratio, svg, perc) {
+    var arc, center, radius, startx, starty;
+    arc = svg.path('');
+    center = 500;
+    radius = 450;
+    startx = 0;
+    starty = 450;
+    return Snap.animate(0, ratio, (function(val) {
+      var path;
+      arc.remove();
+      path = svg_circle_arc_path(500, 500, 450, -90, val * 180.0 - 90);
+      arc = svg.path(path);
+      arc.attr({
+        class: 'data-arc'
+      });
+      perc.text(Math.round(val * 100) + '%');
+    }), Math.round(2000 * ratio), mina.easeinout);
+  };
+
+  $('.metric').each(function() {
+    var ratio, svg, perc;
+    ratio = $(this).data('ratio');
+    svg = Snap($(this).find('svg')[0]);
+    perc = $(this).find('text.percentage');
+    animate_arc(ratio, svg, perc);
+  });
+});

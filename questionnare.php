@@ -1,3 +1,6 @@
+<?php
+require_once('db/sql.php');
+?>
 <!DOCTYPE html>
 <html >
 <head>
@@ -193,11 +196,6 @@
         <ul>
           <li>
             <label>
-              <input type="radio"  id="transit" name="six" value="TRANSIT" />Transit with public transportation
-            </label>
-          </li>
-          <li>
-            <label>
               <input type="radio" id="walking" name="six" value="WALKING" />Walking
             </label>
           </li>
@@ -222,4 +220,19 @@
 <script  src="http://localhost:8080/licenta/js/questionnare-js.js"></script>
 </body>
 </html>
+<?php
+if(isset($_SESSION['questionnare']['id'])){
+  $trip=getQuestionnare($_SESSION['questionnare']['id']);
+  ?>
+  <script>
+  $('input[name="one"][value="<?php echo $trip['qone']; ?>"]').attr('checked', true);
+  $('input[name="two"][value="<?php echo $trip['qtwo']; ?>"]').attr('checked', true);
+  $('input[name="three"][value="<?php echo $trip['qthree']; ?>"]').attr('checked', true);
+  $('input[name="four"][value="<?php echo $trip['qfour']; ?>"]').attr('checked', true);
+  $('input[name="five"][value="<?php echo $trip['qfive']; ?>"]').attr('checked', true);
+  $('input[name="six"][value="<?php echo $trip['qsix']; ?>"]').attr('checked', true);
+  </script>
+  <?php
+}
+?>
 

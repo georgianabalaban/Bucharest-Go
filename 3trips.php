@@ -113,6 +113,8 @@ var thirdPrices=[];
                     window.location = "http://localhost:8080/licenta/detailedTrip.php";
                 }
             });
+
+    
   });
 
   $('#thirdTrip').on('click',function(){
