@@ -12,6 +12,8 @@ require_once('db/sql.php');
 <body>
   <form method="post" action="./db/sql.php?action=questionnare">
 	<ul class="input_parent">
+
+  
   <p class="what_is_this" title="This is a questionnare so we can plan your personalized trip in Bucharest">?</p>
   <input class="track_item_input" type="radio" name="radio-btn" id="img-1" checked="checked"/>
   <li class="slide-container">

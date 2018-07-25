@@ -59,7 +59,7 @@ require_once('db/sql.php');
 							  </div>
                         </div>
                         <div id="settings" class="tab-pane">
-                            <h4 class="tabTitle">Settings</h4>
+                            <h4 class="tabTitle">Change your settings</h4>
                             <form id="userForm" method="post">
                             	<input type="text" name="userName" id="userName" class="input" placeholder="Name" />
 	                			<input type="email" name="userEmail" id="userEmail" class="input" placeholder="Email"/>
@@ -85,6 +85,7 @@ require_once('db/sql.php');
 <!-- Latest compiled and minified JavaScript -->
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 <script>
+
 
 	$('#userName').val('<?php echo $_SESSION['user']['username']; ?>');
 	$('#userEmail').val('<?php echo $_SESSION['user']['email']; ?>');
@@ -115,52 +116,52 @@ require_once('db/sql.php');
 if(isset($_SESSION['feedback']['id'])){
 	if(isset($_SESSION['feedback']['imgOne'])){
 		?>
-		$('#firstCard').append('<div class="box"><h4>Imaginea incarcata:</h4><img class="image" src="http://localhost:8080/licenta/images/uploaded/<?php echo $_SESSION['feedback']['imgOne']; ?>"/></div>');
+		$('#firstCard').append('<div class="box"><h4>Uploaded image:</h4><img class="image" src="http://localhost:8080/licenta/images/uploaded/<?php echo $_SESSION['feedback']['imgOne']; ?>"/></div>');
 		<?php
 	}
 	if(isset($_SESSION['feedback']['imgTwo'])){
 		?>
-		$('#secondCard').append('<div class="box"><h4>Imaginea incarcata:</h4><img class="image" src="http://localhost:8080/licenta/images/uploaded/<?php echo $_SESSION['feedback']['imgTwo']; ?>"/></div>');
+		$('#secondCard').append('<div class="box"><h4>Uploaded image:</h4><img class="image" src="http://localhost:8080/licenta/images/uploaded/<?php echo $_SESSION['feedback']['imgTwo']; ?>"/></div>');
 		<?php
 	}
 	if(isset($_SESSION['feedback']['imgThree'])){
 		?>
-		$('#thirdCard').append('<div class="box"><h4>Imaginea incarcata:</h4><img class="image" src="http://localhost:8080/licenta/images/uploaded/<?php echo $_SESSION['feedback']['imgThree']; ?>"/></div>');
+		$('#thirdCard').append('<div class="box"><h4>Uploaded image:</h4><img class="image" src="http://localhost:8080/licenta/images/uploaded/<?php echo $_SESSION['feedback']['imgThree']; ?>"/></div>');
 		<?php
 	}
 	if(isset($_SESSION['feedback']['imgFour'])){
 		?>
-		$('#fourthCard').append('<div class="box"><h4>Imaginea incarcata:</h4><img class="image" src="http://localhost:8080/licenta/images/uploaded/<?php echo $_SESSION['feedback']['imgFour']; ?>"/></div>');
+		$('#fourthCard').append('<div class="box"><h4>Uploaded image:</h4><img class="image" src="http://localhost:8080/licenta/images/uploaded/<?php echo $_SESSION['feedback']['imgFour']; ?>"/></div>');
 		<?php
 	}
 	if(isset($_SESSION['feedback']['imgFive'])){
 		?>
-		$('#fifthCard').append('<div class="box"><h4>Imaginea incarcata:</h4><img class="image" src="http://localhost:8080/licenta/images/uploaded/<?php echo $_SESSION['feedback']['imgFive']; ?>"/></div>');
+		$('#fifthCard').append('<div class="box"><h4>Uploaded image:</h4><img class="image" src="http://localhost:8080/licenta/images/uploaded/<?php echo $_SESSION['feedback']['imgFive']; ?>"/></div>');
 		<?php
 	}
 	if(isset($_SESSION['starOne'])){
 		?>
-		$('#firstCard').append('<div class="box"><h4>Nota oferita: <?php echo  $_SESSION['starOne']; ?> / 5</h4></div>');
+		$('#firstCard').append('<div class="box"><h4>Given grade: <?php echo  $_SESSION['starOne']; ?> / 5</h4></div>');
 		<?php
 	}
 	if(isset($_SESSION['starTwo'])){
 		?>
-		$('#secondCard').append('<div class="box"><h4>Nota oferita: <?php echo  $_SESSION['starTwo']; ?> / 5</h4></div>');
+		$('#secondCard').append('<div class="box"><h4>Given grade: <?php echo  $_SESSION['starTwo']; ?> / 5</h4></div>');
 		<?php
 	}
 	if(isset($_SESSION['starThree'])){
 		?>
-		$('#thirdCard').append('<div class="box"><h4>Nota oferita: <?php echo  $_SESSION['starThree']; ?> / 5</h4></div>');
+		$('#thirdCard').append('<div class="box"><h4>Given grade: <?php echo  $_SESSION['starThree']; ?> / 5</h4></div>');
 		<?php
 	}
 	if(isset($_SESSION['starFour'])){
 		?>
-		$('#fourthCard').append('<div class="box"><h4>Nota oferita: <?php echo  $_SESSION['starFour']; ?> / 5</h4></div>');
+		$('#fourthCard').append('<div class="box"><h4>Given grade: <?php echo  $_SESSION['starFour']; ?> / 5</h4></div>');
 		<?php
 	}
 	if(isset($_SESSION['starFive'])){
 		?>
-		$('#fifthCard').append('<div class="box"><h4>Nota oferita: <?php echo  $_SESSION['starFive']; ?> / 5</h4></div>');
+		$('#fifthCard').append('<div class="box"><h4>Given grade: <?php echo  $_SESSION['starFive']; ?> / 5</h4></div>');
 		<?php
 	}
 	?>
@@ -288,6 +289,7 @@ $('#userForm').on('submit', function(e){
 <?php
 if(isset($_SESSION['typeHistory']) && isset($_SESSION['typeNature']) && isset($_SESSION['typeShopping']) && isset($_SESSION['typeArt']) && isset($_SESSION['typeFoodDrink'])){
 ?>
+$('#printBtn').show();
 var total=<?php echo $_SESSION['typeHistory']+$_SESSION['typeNature']+$_SESSION['typeShopping']+$_SESSION['typeArt']+$_SESSION['typeFoodDrink']; ?>;
 var historyProcent=(<?php echo $_SESSION['typeHistory']; ?>/total)*100;
 var natureProcent=(<?php echo $_SESSION['typeNature']; ?>/total)*100;

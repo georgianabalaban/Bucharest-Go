@@ -28,6 +28,7 @@ require_once('db/sql.php');
 <div id="changePref">
   <button id="changePrefBtn" type="button" class="btn btn-primary">Change preferences</button>
   <button type="button" id="homeBtn" class="btn btn-info"><span class="glyphicon glyphicon-home"></span>       Go Home</button>
+  <button type="button" id="printBtn" class="btn btn-success" onclick='printDiv();'>Print Report</button>
 </div>
 
 <div id="destinationsInfo">
@@ -367,17 +368,20 @@ require_once('db/sql.php');
   </div>
 
 <script type="text/javascript">
+//---------------------change preferences-----------------------------
+
+
 $('#changePrefBtn').click(function(){
   window.location.href="http://localhost:8080/licenta/preferences.php";
 });
 
+//-------------------------data manipulation-------------------------------
 
 var timpPentruVizitare='';
 var timpPentruTransportare='';
   var outputText=[];//vector cu informatii pentru fiecare destinatie in parte
   var transportationPrice=0;
   var addresses=[];//vector unde retin adresele obiectivelor
-  var transtationTime=[];//vector unde salvez timpul de transportare intre fiecare destinatie
   var transportation='<?php echo $_SESSION['transportMode']; ?>';
 
   var distantaTotala=0.0;
@@ -417,7 +421,7 @@ var timpPentruTransportare='';
   for(var i=0;i<prices.length;i++){
     totalPrices+=parseInt(prices[i]);
   }
-  //nr total de minune de vizitat doar destinatiile, fara timpul de transport
+  //nr total de minute de vizitat doar destinatiile, fara timpul de transport
   var totalTimes=0;
   for(var i=0;i<times.length;i++){
     totalTimes+=parseInt(times[i]);
@@ -429,25 +433,24 @@ var timpPentruTransportare='';
   var destinatii=[];
   var pos;
 
-  //callback function for google maps api
+  //------------------------callback function for google maps api-------------------------------------
   function initMap() {
-      //map initialization
+      //---------------------------map initialization--------------------
         var map = new google.maps.Map(document.getElementById('map'), {
           center: {lat: 55.53, lng: 9.4},
           zoom: 10
         });
 
-         //user position display
+         //--------------------------user position display----------------
 
-        var stepDisplay = new google.maps.InfoWindow(); 
+        //var stepDisplay = new google.maps.InfoWindow(); 
   
         var userPos = new google.maps.InfoWindow();
 
   
-         // Try HTML5 geolocation.
+         //-------------------- Try HTML5 geolocation.--------------------------------
   if (navigator.geolocation) {
-
-    //pozitia curenta a utilizatorului
+    //-------------------------------------pozitia curenta a utilizatorului------------------------------
     navigator.geolocation.getCurrentPosition(function(position) {
       pos = {
         lat: position.coords.latitude,
@@ -455,7 +458,7 @@ var timpPentruTransportare='';
       };
       
 
-      //markerul de pe harta pentru locatia actuala
+      //-----------------markerul de pe harta pentru locatia actuala------------------------
       var userIcon = 'https://chart.googleapis.com/chart?' +
             'chst=d_map_pin_letter&chld=A|FF0000|000000';
       
@@ -492,7 +495,7 @@ var timpPentruTransportare='';
       userPos.open(map);
       map.setCenter(pos);
 
-      //directions api
+      //--------------------------------------------directions api-----------------------------
 
        var directionsService = new google.maps.DirectionsService;
       var directionsDisplay = new google.maps.DirectionsRenderer(
@@ -503,7 +506,7 @@ var timpPentruTransportare='';
 
         var bounds = new google.maps.LatLngBounds;
         var markersArray = [];
-            //iconite markeri pt harta
+            //---------------------iconite markeri pt harta-----------------
             var icon1 = 'https://chart.googleapis.com/chart?' +
             'chst=d_map_pin_letter&chld=B|FF0000|000000';
             var icon2 = 'https://chart.googleapis.com/chart?' +
@@ -516,7 +519,7 @@ var timpPentruTransportare='';
             'chst=d_map_pin_letter&chld=F|FF0000|000000';
 
 
-            //calcul vectori origini si destinatii
+            //----------------calcul vectori origini si destinatii----------------
           origini.push(pos);//user position
           for(var i=0;i<nrDestinatii;i++){
 
@@ -527,6 +530,7 @@ var timpPentruTransportare='';
 
         var geocoder = new google.maps.Geocoder;
         var service = new google.maps.DistanceMatrixService;
+
         service.getDistanceMatrix({
           origins: origini,
           destinations: destinatii,
@@ -539,139 +543,166 @@ var timpPentruTransportare='';
             console.log(status);
           
           } else {
-            //lists of origins and destinations from the response
+            //-----------------------lists of origins and destinations from the response----------------
             var originList = response.originAddresses;
             var destinationList = response.destinationAddresses;
 
             var outputDiv = document.getElementById('output');
             outputDiv.innerHTML = '';
 
-            //add markers with images and data to map
-             var showGeocodedAddressOnMap = function(index) {
-              var icon='';
-              var nameOfDestination=destinations[index]; 
-              if(index==0){
-                icon=icon1;
-              }else if(index==1){
-                icon=icon2;
-
-              }else if(index==2){
-                icon=icon3;
-
-              }else if(index==3){
-                icon=icon4;
-
-              }else{
-                icon=icon5;
-
-              }
-              return function(results, status) {
-                if (status === 'OK') {
-                  var contentString='';
-                     contentString = '<div id="content">'+
-                  '<p>'+nameOfDestination+'</p>'
-                  +'<img src="http://localhost:8080/licenta/images/'+imagesLinks[index]+'" width="100%" height="80%" position="relative"/>'
-                  +'</div>';
-                 var infowindow = new google.maps.InfoWindow({
-                    content: contentString
-                  });
-
-
-                  map.fitBounds(bounds.extend(results[0].geometry.location));
-                  var marker=new google.maps.Marker({
-                    map: map,
-                    position: results[0].geometry.location,
-                    icon: icon
-                  })
-                  //add infobox
-                  marker.addListener('click', function() {
-                      infowindow.open(map, marker);
-                    });
-
-                  markersArray.push(marker);
-
-                } else {
-                  alert('Geocode was not successful due to: ' + status);
-                }
-              };
-            };
-
             for(var i=1;i<originList.length;i++){
 
-                //adaug adresele fiecarei destinatii
+                //-------------adaug adresele fiecarei destinatii-----------
                 addresses.push(originList[i]);
             }
-            //display location of user
-            addresses.push(destinationList[3]);
 
-              //calculez distantele intre locatia userului si fiecare destinatie si sortez
+             
+            for(var i=0; i<originList.length-1;i++){
+                var results = response.rows[i].elements;
+
+              //--------------calcul distanta totala in km-------------
+              var res=results[i].distance.text.split(' ');
+              var r=res[0].split(',');
+              var intreg=parseInt(r[0].split('.')[0]);
+              var zecimala=parseInt(r[0].split('.')[1]);
+              var dist=intreg+parseFloat(zecimala/10);
+              distantaTotala+=parseFloat(dist);
+
+              //--------------------calcul timp total---------------------
+              var tes=results[i].duration.text.split(' ');
+              if(tes.length==2){//daca are durata mai mica de o ora,adica contine doar minute
+                var min=parseInt(tes[0]);
+                minuteTotale=minuteTotale+min; 
+              }else{//daca are durata mai mare de o ora
+                var min=parseInt(tes[2]);//nr minute returnat
+                var h=parseInt(tes[0]);//nr ore returnat transformat in minute
+                minuteTotale=minuteTotale+min+h;
+              }
+              
+            }
+
+             //-----------calculez distantele intre locatia userului si fiecare destinatie si sortez----------
 
               var firstDistances=response.rows[0].elements;
-
               //bubble sort
-              for(var i=0;i<firstDistances.length-1;i++){
-                var res=firstDistances[i].distance.text.split(' ');
-                  var r=res[0].split(',');
+              for(var i=1;i<firstDistances.length;i++){
+                
+                for(var j=0;j<firstDistances.length-i;j++){
+                  var res=firstDistances[j].distance.text.split(' ');
+                  var r=res[0].split('.');
                   var intreg=parseInt(r[0]);
                   var zecimala=parseInt(r[1]);
                   var d=intreg+parseFloat(zecimala/10);
-                for(var j=i+1;j<firstDistances.length;j++){
-                  var res1=firstDistances[j].distance.text.split(' ');
-                  var r1=res1[0].split(',');
+                  var res1=firstDistances[j+1].distance.text.split(' ');
+                  var r1=res1[0].split('.');
                   var intreg1=parseInt(r1[0]);
                   var zecimala1=parseInt(r1[1]);
                   var d1=intreg1+parseFloat(zecimala1/10);
                   if(d>d1){
-                    //sortarea tuturor vectorilor folositi
-                    var aux=destinations[i];
-                    destinations[i]=destinations[j];
-                    destinations[j]=aux;
+                    //-----------sortarea tuturor vectorilor folositi----------
+                    
+                    var aux=destinations[j];
+                    destinations[j]=destinations[j+1];
+                    destinations[j+1]=aux;
 
-                    var aux2=prices[i];
-                    prices[i]=prices[j];
-                    prices[j]=aux2;
+                    var aux2=prices[j];
+                    prices[j]=prices[j+1];
+                    prices[j+1]=aux2;
 
-                    var aux3=times[i];
-                    times[i]=times[j];
-                    times[j]=aux3;
+                    var aux3=times[j];
+                    times[j]=times[j+1];
+                    times[j+1]=aux3;
 
-                    var aux4=imagesLinks[i];
-                    imagesLinks[i]=imagesLinks[j];
-                    imagesLinks[j]=aux4;
+                    var aux4=imagesLinks[j];
+                    imagesLinks[j]=imagesLinks[j+1];
+                    imagesLinks[j+1]=aux4;
 
-                    var aux5=addresses[i];
-                    addresses[i]=addresses[j];
-                    addresses[j]=aux5;
+                    var aux5=addresses[j];
+                    addresses[j]=addresses[j+1];
+                    addresses[j+1]=aux5;
 
-                    var aux1=firstDistances[i];
-                    firstDistances[i]=firstDistances[j];
-                    firstDistances[j]=aux1;
+                    var aux1=firstDistances[j];
+                    firstDistances[j]=firstDistances[j+1];
+                    firstDistances[j+1]=aux1;
+                    
                   }
                 }
               }
+
+
+          //-----------------------------add markers with images and data to map-----------------------
+       var showGeocodedAddressOnMap = function(index) {
+        var icon='';
+        var nameOfDestination=destinations[index]; 
+        if(index==0){
+          icon=icon1;
+        }else if(index==1){
+          icon=icon2;
+
+        }else if(index==2){
+          icon=icon3;
+
+        }else if(index==3){
+          icon=icon4;
+
+        }else{
+          icon=icon5;
+
+        }
+        return function(results, status) {
+          if (status === 'OK') {
+            var contentString='';
+               contentString = '<div id="content">'+
+            '<p>'+nameOfDestination+'</p>'
+            +'<img src="http://localhost:8080/licenta/images/'+imagesLinks[index]+'" width="100%" height="80%" position="relative"/>'
+            +'</div>';
+           var infowindow = new google.maps.InfoWindow({
+              content: contentString
+            });
+
+
+            map.fitBounds(bounds.extend(results[0].geometry.location));
+            
+            var marker=new google.maps.Marker({
+              map: map,
+              position: results[0].geometry.location,
+              icon: icon
+            })
+            //add infobox
+            marker.addListener('click', function() {
+                infowindow.open(map, marker);
+              });
+
+            markersArray.push(marker);
+
+          } else {
+            alert('Geocode was not successful due to: ' + status);
+          }
+        };
+      };
   
-    //show markers on map
+    //-----------------------show markers on map--------------------
     for (var i = 0; i < destinations.length; i++) {
     
         geocoder.geocode({'address': destinations[i]},
           showGeocodedAddressOnMap(i));
     }
         
-  /*display google maps directions*/
+  /*---------------------display google maps directions-----------------------*/
    var waypts = [];
-              for (var i = 0; i < destinations.length-1; i++) {
-                  
-                    waypts.push({
-                      location: destinations[i],
-                      stopover: true
-                    });
-                  
-              }
+    for (var i = 0; i < destinations.length-1; i++) {
+        
+          waypts.push({
+            location: destinations[i],
+            stopover: true
+          });
+        
+    }
    directionsService.route({
           origin: pos,
           destination: destinations[destinations.length-1],
           waypoints: waypts,
-          optimizeWaypoints: true,
+          optimizeWaypoints: false,
           travelMode: transportation
         }, function(response, status) {
           if (status === 'OK') {
@@ -691,34 +722,9 @@ var timpPentruTransportare='';
     panel: document.getElementById('directions')
   });
 
-              for(var i=0; i<originList.length-1;i++){
-                var results = response.rows[i].elements;
-
-              //calcul distanta totala in km
-              var res=results[i].distance.text.split(' ');
-              var r=res[0].split(',');
-              var intreg=parseInt(r[0]);
-              var zecimala=parseInt(r[1]);
-              var dist=intreg+parseFloat(zecimala/10);
-              distantaTotala+=parseFloat(dist);
-
-              //calcul timp total
-              var tes=results[i].duration.text.split(' ');
-              if(tes.length==2){//daca are durata mai mica de o ora,adica contine doar minute
-                var min=parseInt(tes[0]);
-                transtationTime.push(min+" minutes");//timpul pentru fiecare destinatie
-                minuteTotale=minuteTotale+min; 
-              }else{//daca are durata mai mare de o ora
-                var min=parseInt(tes[2]);//nr minute returnat
-                var h=parseInt(tes[0]);//nr ore returnat transformat in minute
-                transtationTime.push(h+' hours and '+min+' minutes');
-                minuteTotale=minuteTotale+min+h;
-              }
-              
-            }
 
 
- //output title of destinations
+ //------------------------output title of destinations------------------
   $('#first .title').html("<p>Your location: "+originList[0]+"</p>");
   $('#second .title').html(destinations[0]);
   $('#third .title').html(destinations[1]);
@@ -726,41 +732,41 @@ var timpPentruTransportare='';
   $('#fifth .title').html(destinations[3]);
   $('#sixth .title').html(destinations[4]);
 
-  //output name of destinations into feedback modal
+  //-----------------------output name of destinations into feedback modal------------
+
   $('#myModal #feedone p').html(destinations[0]);
   $('#myModal #feedtwo p').html(destinations[1]);
   $('#myModal #feedthree p').html(destinations[2]);
   $('#myModal #feedfour p').html(destinations[3]);
   $('#myModal #feedfive p').html(destinations[4]);
-  //output prices of destinations
+
+  //--------------------------------output prices of destinations---------------------
+
   $('#second .details ul').append("<li>Price for visiting is: "+prices[0]+" lei</li>");
   $('#third .details ul').append("<li>Price for visiting is: "+prices[1]+" lei</li>");
   $('#fourth .details ul').append("<li>Price for visiting is: "+prices[2]+" lei</li>");
   $('#fifth .details ul').append("<li>Price for visiting is: "+prices[3]+" lei</li>");
   $('#sixth .details ul').append("<li>Price for visiting is: "+prices[4]+" lei</li>");
-  //output time of visiting for each destination
+
+  //---------------------------output time of visiting for each destination--------------
+
   $('#second .details ul').append("<li>Time for visiting is: "+times[0]+" minutes</li>");
   $('#third .details ul').append("<li>Time for visiting is: "+times[1]+" minutes</li>");
   $('#fourth .details ul').append("<li>Time for visiting is: "+times[2]+" minutes</li>");
   $('#fifth .details ul').append("<li>Time for visiting is: "+times[3]+" minutes</li>");
   $('#sixth .details ul').append("<li>Time for visiting is: "+times[4]+" minutes</li>");
-   //afisare fiecare adresa
+
+   //--------------------------------afisare fiecare adresa----------------------------
+
             $('#second .details ul').append("<li>Address: "+addresses[0]+" </li>");
             $('#third .details ul').append("<li>Address: "+addresses[1]+" </li>");
             $('#fourth .details ul').append("<li>Address: "+addresses[2]+" </li>");
             $('#fifth .details ul').append("<li>Address: "+addresses[3]+" </li>");
             $('#sixth .details ul').append("<li>Address: "+addresses[4]+" </li>");
-  
-            //afisare timp de transportare intre fiecare destinatie
-            $('#first .distanceBetween').append("Transportation time until next destination: "+transtationTime[0]);
-            $('#second .distanceBetween').append("Transportation time until next destination: "+transtationTime[1]);
-            $('#third .distanceBetween').append("Transportation time until next destination: "+transtationTime[2]);
-            $('#fourth .distanceBetween').append("Transportation time until next destination: "+transtationTime[3]);
-            $('#fifth .distanceBetween').append("Transportation time until next destination: "+transtationTime[4]);
 
 
+          //----------------------------calcul timp pentru transportare---------------------
 
-          //calcul timp pentru transportare
              if(minuteTotale>=60){
                 var ore=parseInt(minuteTotale/60);
                 var minute=parseInt(minuteTotale%60);
@@ -769,7 +775,8 @@ var timpPentruTransportare='';
                 timpPentruTransportare=minuteTotale+" minutes";
               }
 
-            //calcul timp pentru vizitare
+            //------------------------------calcul timp pentru vizitare-----------------------------
+
             if(totalTimes>=60){
               var visitOre=parseInt(totalTimes/60);
               var visitMin=parseInt(totalTimes%60);
@@ -779,7 +786,8 @@ var timpPentruTransportare='';
             }
 
 
-            //calcul timp total
+            //---------------------------------------calcul timp total-----------------------------
+            
             minuteTotale+=totalTimes;//adaug minutele pentru vizitare obiective
 
             if(minuteTotale>60 || minuteTotale==60){
@@ -973,12 +981,40 @@ if(isset($_POST['submitFeedback'])){
 }
 ?>
 
+
+//--------------------------------redirectionare catre pagina principala-------------------
+
 $('#homeBtn').on('click',function(){
   window.location.href="http://localhost:8080/licenta";
 });
+
+//------------------------------print button------------------------------
+
+function printDiv() 
+{
+  var destinationsReport='<div id="reportDest" style="margin-bottom: 30px;"><table><thead><tr><th>Destination Name</th><th>Destination Address</th><th>Destination Visiting Price</th><th>Destination Visiting Time</th></tr></thead><tbody>';
+  for(var i=0; i<destinations.length;i++){
+    destinationsReport+='<tr style="text-align: center;"><td>'+destinations[i]+'</td><td>'+addresses[i]+'</td><td>'+prices[i]+' lei</td><td>'+times[i]+' minutes</td></tr>';
+  }
+  destinationsReport+='</tbody></table></div>';
+
+  var totalReport= '<div id="reportTotal"><table><thead><tr><th>Transportation Mode</th><th>Total Distance</th><th>Total Price</th><th>Total Time For Visitation</th><th>Total Time For Transportation</th><th>Total Time</th></tr></thead><tbody><tr style="text-align: center;"><td>'+transportation+'</td><td>'+Math.round(distantaTotala*10)/10+' km</td><td>'+totalPrices+' lei</td><td>'+timpPentruVizitare+'</td><td>'+timpPentruTransportare+'</td><td>'+timpTotal+'</td></tr></tbody></table></div>';
+
+
+  var newWin=window.open('','Print-Window');
+
+  newWin.document.open();
+
+  newWin.document.write('<html><body onload="window.print()">'+destinationsReport+totalReport+'</body></html>');
+
+  newWin.document.close();
+
+  setTimeout(function(){newWin.close();},10);
+
+}
 </script>
 <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDSEybUFjy07vHO-U22J4vYcrvPY5BnUuM&callback=initMap">
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDSEybUFjy07vHO-U22J4vYcrvPY5BnUuM&callback=initMap&language=en">
 </script>
 </body>
 </html>

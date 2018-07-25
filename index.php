@@ -243,6 +243,7 @@ require_once('db/sql.php');
 </html>
 
 <script>
+//--------------------buton login si meniu utilizator---------------------
 $('#myTrip').hide();
 $('#changePref').hide();
 <?php
@@ -267,6 +268,8 @@ if(isset($_SESSION['user']['username'])){
   <?php
 }
 ?>
+
+//----------------------------------------ajax formulare de inregistrare si conectare------------------------------
 $(function () {
         $('#signupForm').on('submit', function (e) {
             e.preventDefault();
@@ -338,7 +341,7 @@ $(function () {
         });
       });
 
-
+//------------------------------------mesaje de avertizare pentru butonul de deschidere chestionar-----------------------
       $('#planTrip').click(function(event) {
           event.preventDefault();
           <?php
@@ -378,13 +381,14 @@ foreach($bestRated as $dest){
   $procentage=$dest['destination_stars']/$nrStars;
   $procentage=round($procentage,2);
   ?>
-  //---------------------------show title of destination and pictures uploaded by users
-  $('#destinationsInfo').append("<h3>"+'<?php echo $dest['destination_name']; ?>'+"</h3>");
-  $('#destinationsInfo').append('<div class="destinationsPercentage"><img class="imgRatedDest" src="http://localhost:8080/licenta/images/'+'<?php echo $dest['destination_image']; ?>'+'" width="60%" height="10%" position="relative"/><div class="metric completion" data-ratio="<?php echo $procentage; ?>"><svg viewBox="0 0 1000 500"><path d="M 950 500 A 450 450 0 0 0 50 500"></path><text class="percentage" text-anchor="middle" alignment-baseline="middle" x="500" y="300" font-size="140" font-weight="bold">0%</text><text class="title" text-anchor="middle" alignment-baseline="middle" x="500" y="450" font-size="50" font-weight="normal">people voted for this</text></svg></div></div>');
-  <?php
+//---------------------------show title of destination and pictures uploaded by users
+$('#destinationsInfo').append("<h3>"+'<?php echo $dest['destination_name']; ?>'+"</h3>");
+$('#destinationsInfo').append('<div class="destinationsPercentage"><img class="imgRatedDest" src="http://localhost:8080/licenta/images/'+'<?php echo $dest['destination_image']; ?>'+'" width="60%" height="10%" position="relative"/><div class="metric completion" data-ratio="<?php echo $procentage; ?>"><svg viewBox="0 0 1000 500"><path d="M 950 500 A 450 450 0 0 0 50 500"></path><text class="percentage" text-anchor="middle" alignment-baseline="middle" x="500" y="300" font-size="140" font-weight="bold">0%</text><text class="title" text-anchor="middle" alignment-baseline="middle" x="500" y="450" font-size="50" font-weight="normal">people voted for this</text></svg></div></div>');
+<?php
 }
 ?>
 
+//------------informatii din bd in sectiunea a doua-------------------
 var one='<?php echo $firstDetails['details_info']; ?>';
 var firstSection=one.split('. ');
 firstSection.forEach(function(detail){

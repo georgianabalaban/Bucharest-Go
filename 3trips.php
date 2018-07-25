@@ -40,13 +40,17 @@ var secondVector=[];
 var secondPrices=[];
 var thirdVector=[];
 var thirdPrices=[];
+var priceLow=0;
+var priceMedium=0;
+var priceHigh=0;
 </script>
 <?php
   foreach($_SESSION['firstTripDestinations'] as $t){
     ?>
     <script>
       firstVector.push('<?php echo $t['destination_name']; ?>');
-      firstPrices.push('<?php echo $t['destination_price']; ?>');
+      firstPrices.push(<?php echo $t['destination_price']; ?>);
+      priceLow+=<?php echo $t['destination_price']; ?>;
     </script>
     <?php
   }
@@ -54,7 +58,8 @@ var thirdPrices=[];
     ?>
     <script>
       thirdVector.push('<?php echo $t['destination_name']; ?>');
-      thirdPrices.push('<?php echo $t['destination_price']; ?>');
+      thirdPrices.push(<?php echo $t['destination_price']; ?>);
+      priceHigh+=<?php echo $t['destination_price']; ?>;
     </script>
     <?php
   }
@@ -65,10 +70,12 @@ var thirdPrices=[];
     for(var i=0;i<=2;i++){
       secondVector.push(firstVector[i]);
       secondPrices.push(firstPrices[i]);
+      priceMedium+=firstPrices[i];
     }
     for(var i=0;i<=1;i++){
       secondVector.push(thirdVector[i]);
       secondPrices.push(thirdPrices[i]);
+      priceMedium+=thirdPrices[i];
     }
 
     //display info for resumed trips
@@ -78,6 +85,7 @@ var thirdPrices=[];
       firstText+=firstVector[i]+' with the cost of '+firstPrices[i]+" lei."+"<br><hr>";
     }
     $('#firstTrip #firstText').html(firstText);
+    $('#firstTrip #firstText').append("Total cost: "+priceLow+" lei");
 
 
     var secondText='';
@@ -85,12 +93,14 @@ var thirdPrices=[];
       secondText+=secondVector[i]+' with the cost of '+secondPrices[i]+" lei."+"<br><hr>";
     }
     $('#secondTrip #secondText').html(secondText);
+    $('#secondTrip #secondText').append("Total cost: "+priceMedium+" lei");
 
     var thirdText='';
     for(var i=0;i<thirdVector.length;i++){
       thirdText+=thirdVector[i]+' with the cost of '+thirdPrices[i]+" lei."+"<br><hr>";
     }
     $('#thirdTrip #thirdText').html(thirdText);
+    $('#thirdTrip #thirdText').append("Total cost: "+priceHigh+" lei");
 
     //trigger click pe div
   $('#firstTrip').on('click',function(){

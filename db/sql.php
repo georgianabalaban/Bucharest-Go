@@ -26,13 +26,17 @@ $action = isset( $_GET['action'] ) ? $_GET['action'] : "";
 				        $_SESSION['user']['id']=$res['id'];
 				        if($res['trip_id']!=0){
 				               $_SESSION['trip']['id']=$res['trip_id'];
-				               $detailsId=getDetailsId($_SESSION['user']['id']);
-							    $details=getDetails($detailsId['detailed_destinations_id']);
-							    $_SESSION['first']=selectDestination($details['detail_1']);
+				               //$detailsId=getDetailsId($_SESSION['user']['id']);
+							    //$details=getDetails($detailsId['detailed_destinations_id']);
+				               $destinations=selectAllDestinations($_SESSION['user']['id']);
+				               foreach($destinations as $dest){
+				               	echo $dest['destination_id'];
+				               }
+							    /*$_SESSION['first']=selectDestination($details['detail_1']);
 								$_SESSION['second']=selectDestination($details['detail_2']);
 								$_SESSION['third']=selectDestination($details['detail_3']);
 								$_SESSION['fourth']=selectDestination($details['detail_4']);
-								$_SESSION['fifth']=selectDestination($details['detail_5']);
+								$_SESSION['fifth']=selectDestination($details['detail_5']);*/
 
 								$types=selectTripType($detailsId['detailed_destinations_id']);
 								 $_SESSION['typeHistory']=$types['history'];
@@ -46,7 +50,7 @@ $action = isset( $_GET['action'] ) ? $_GET['action'] : "";
 				        }
 				        echo $_SESSION['user']['username'];
 					}else{
-						echo"error";
+						echo "error";
 					}
 					break;
 				}
@@ -402,24 +406,28 @@ $action = isset( $_GET['action'] ) ? $_GET['action'] : "";
 					    break;
 			}
 			case 'detailesLowest': {
-				$trip=getTrip($_SESSION['trip']['id']);
 			    $lowestDest=array();
-			    $firstTripDestinations=getLowestDestinations($trip['typeOne'],$trip['typeTwo'],$trip['typeThree']);
-			    foreach($firstTripDestinations as $t){
+			    foreach($_SESSION['firstTripDestinations'] as $t){
 			      array_push($lowestDest, $t['destination_id']);
 			    }
-			    $res=insertDetails($lowestDest[0],$lowestDest[1],$lowestDest[2],$lowestDest[3],$lowestDest[4]);
-			    if($res){
-				    $lastDetails=getLastDetails();
-				    $_SESSION['details']['id']=$lastDetails['id'];
-				    $update=updateDatailsToUser($_SESSION['user']['id'],$_SESSION['details']['id']);
-				    $detailsId=getDetailsId($_SESSION['user']['id']);
-				    $res=getDetails($detailsId['detailed_destinations_id']);
-				    $_SESSION['first']=selectDestination($res['detail_1']);
-					$_SESSION['second']=selectDestination($res['detail_2']);
-					$_SESSION['third']=selectDestination($res['detail_3']);
-					$_SESSION['fourth']=selectDestination($res['detail_4']);
-					$_SESSION['fifth']=selectDestination($res['detail_5']);
+			    //$res=insertDetails($lowestDest[0],$lowestDest[1],$lowestDest[2],$lowestDest[3],$lowestDest[4]);
+			    deleteDestionations($_SESSION['user']['id']);
+			    $res1=insertDestination($_SESSION['user']['id'],$lowestDest[0]);
+			    $res2=insertDestination($_SESSION['user']['id'],$lowestDest[1]);
+			    $res3=insertDestination($_SESSION['user']['id'],$lowestDest[2]);
+			    $res4=insertDestination($_SESSION['user']['id'],$lowestDest[3]);
+			    $res5=insertDestination($_SESSION['user']['id'],$lowestDest[4]);
+			    if($res1 && $res2 && $res3 && $res4 && $res5){
+				    //$lastDetails=getLastDetails();
+				    //$_SESSION['details']['id']=$lastDetails['id'];
+				    //$update=updateDatailsToUser($_SESSION['user']['id'],$_SESSION['details']['id']);
+				    //$detailsId=getDetailsId($_SESSION['user']['id']);
+				    //$res=getDetails($detailsId['detailed_destinations_id']);
+				    $_SESSION['first']=selectDestination($lowestDest[0]);
+					$_SESSION['second']=selectDestination($lowestDest[1]);
+					$_SESSION['third']=selectDestination($lowestDest[2]);
+					$_SESSION['fourth']=selectDestination($lowestDest[3]);
+					$_SESSION['fifth']=selectDestination($lowestDest[4]);
 				    echo "succes"; 
 			    }else{
 			      	echo "error";
@@ -428,29 +436,32 @@ $action = isset( $_GET['action'] ) ? $_GET['action'] : "";
 				break;
 			}
 			case 'detailesMedium': {
-				$trip=getTrip($_SESSION['trip']['id']);
-			    $lowestDest=array();
-			    $firstTripDestinations=getLowestDestinations($trip['typeOne'],$trip['typeTwo'],$trip['typeThree']);
-			    foreach($firstTripDestinations as $t){
-			      array_push($lowestDest, $t['destination_id']);
+			    $mediumDest=array();
+			    foreach($_SESSION['firstTripDestinations'] as $t){
+			      array_push($mediumDest, $t['destination_id']);
 			    }
-			    $highestDest=getHighestDestinations($trip['typeOne'],$trip['typeTwo'],$trip['typeThree']);
-			     foreach($highestDest as $t){
-			      array_push($lowestDest, $t['destination_id']);
+			     foreach($_SESSION['thirdTripDestinations'] as $t){
+			      array_push($mediumDest, $t['destination_id']);
 			    }
-			    $res=insertDetails($lowestDest[0],$lowestDest[1],$lowestDest[2],$lowestDest[3],$lowestDest[4]);
-			    if($res){
+			    //$res=insertDetails($mediumDest[0],$mediumDest[1],$mediumDest[2],$mediumDest[5],$mediumDest[6]);
+			    deleteDestionations($_SESSION['user']['id']);
+			    $res1=insertDestination($_SESSION['user']['id'],$mediumDest[0]);
+			    $res2=insertDestination($_SESSION['user']['id'],$mediumDest[1]);
+			    $res3=insertDestination($_SESSION['user']['id'],$mediumDest[2]);
+			    $res4=insertDestination($_SESSION['user']['id'],$mediumDest[5]);
+			    $res5=insertDestination($_SESSION['user']['id'],$mediumDest[6]);
+			    if($res1 && $res2 && $res3 && $res4 && $res5){
 
-			    $lastDetails=getLastDetails();
-			    $_SESSION['details']['id']=$lastDetails['id'];
-			    $update=updateDatailsToUser($_SESSION['user']['id'],$_SESSION['details']['id']);
-			    $detailsId=getDetailsId($_SESSION['user']['id']);
-			    $res=getDetails($detailsId['detailed_destinations_id']);
-			    $_SESSION['first']=selectDestination($res['detail_1']);
-				$_SESSION['second']=selectDestination($res['detail_2']);
-				$_SESSION['third']=selectDestination($res['detail_3']);
-				$_SESSION['fourth']=selectDestination($res['detail_4']);
-				$_SESSION['fifth']=selectDestination($res['detail_5']);
+			    //$lastDetails=getLastDetails();
+			    //$_SESSION['details']['id']=$lastDetails['id'];
+			    //$update=updateDatailsToUser($_SESSION['user']['id'],$_SESSION['details']['id']);
+			    //$detailsId=getDetailsId($_SESSION['user']['id']);
+			    //$res=getDetails($detailsId['detailed_destinations_id']);
+			    $_SESSION['first']=selectDestination($mediumDest[0]);
+				$_SESSION['second']=selectDestination($mediumDest[1]);
+				$_SESSION['third']=selectDestination($mediumDest[2]);
+				$_SESSION['fourth']=selectDestination($mediumDest[5]);
+				$_SESSION['fifth']=selectDestination($mediumDest[6]);
 			    echo "succes"; 
 			    }else{
 			      echo "error";
@@ -459,25 +470,28 @@ $action = isset( $_GET['action'] ) ? $_GET['action'] : "";
 				break;
 			}
 			case 'detailesHighest': {
-				$trip=getTrip($_SESSION['trip']['id']);
-			    $lowestDest=array();
-			    $firstTripDestinations=getHighestDestinations($trip['typeOne'],$trip['typeTwo'],$trip['typeThree']);
-			    foreach($firstTripDestinations as $t){
-			      array_push($lowestDest, $t['destination_id']);
+			    $highestDest=array();
+			    foreach($_SESSION['thirdTripDestinations'] as $t){
+			      array_push($highestDest, $t['destination_id']);
 			    }
-			    $res=insertDetails($lowestDest[0],$lowestDest[1],$lowestDest[2],$lowestDest[3],$lowestDest[4]);
-			    if($res){
-			    $lastDetails=getLastDetails();
-			    $_SESSION['details']['id']=$lastDetails['id'];
-			    $update=updateDatailsToUser($_SESSION['user']['id'],$_SESSION['details']['id']);
-			    $detailsId=getDetailsId($_SESSION['user']['id']);
-			    $res=getDetails($detailsId['detailed_destinations_id']);
-			    $_SESSION['first']=selectDestination($res['detail_1']);
-				$_SESSION['second']=selectDestination($res['detail_2']);
-				$_SESSION['third']=selectDestination($res['detail_3']);
-				$_SESSION['fourth']=selectDestination($res['detail_4']);
-				$_SESSION['fifth']=selectDestination($res['detail_5']);
-
+			    //$res=insertDetails($highestDest[0],$highestDest[1],$highestDest[2],$highestDest[3],$highestDest[4]);
+			    deleteDestionations($_SESSION['user']['id']);
+			    $res1=insertDestination($_SESSION['user']['id'],$highestDest[0]);
+			    $res2=insertDestination($_SESSION['user']['id'],$highestDest[1]);
+			    $res3=insertDestination($_SESSION['user']['id'],$highestDest[2]);
+			    $res4=insertDestination($_SESSION['user']['id'],$highestDest[3]);
+			    $res5=insertDestination($_SESSION['user']['id'],$highestDest[4]);
+			    if($res1 && $res2 && $res3 && $res4 && $res5){
+			    //$lastDetails=getLastDetails();
+			    //$_SESSION['details']['id']=$lastDetails['id'];
+			    //$update=updateDatailsToUser($_SESSION['user']['id'],$_SESSION['details']['id']);
+			    //$detailsId=getDetailsId($_SESSION['user']['id']);
+			    //$res=getDetails($detailsId['detailed_destinations_id']);
+			    $_SESSION['first']=selectDestination($highestDest[0]);
+				$_SESSION['second']=selectDestination($highestDest[1]);
+				$_SESSION['third']=selectDestination($highestDest[2]);
+				$_SESSION['fourth']=selectDestination($highestDest[3]);
+				$_SESSION['fifth']=selectDestination($highestDest[4]);
 			    echo "succes"; 
 			    }else{
 			      echo "error";
@@ -695,18 +709,24 @@ $action = isset( $_GET['action'] ) ? $_GET['action'] : "";
 			    foreach($firstTripDestinations as $t){
 			      array_push($lowestDest, $t['destination_id']);
 			    }
-			    $res=insertDetails($lowestDest[0],$lowestDest[1],$lowestDest[2],$lowestDest[3],$lowestDest[4]);
-			    if($res){
-				    $lastDetails=getLastDetails();
+			    //$res=insertDetails($lowestDest[0],$lowestDest[1],$lowestDest[2],$lowestDest[3],$lowestDest[4]);
+			    deleteDestionations($_SESSION['user']['id']);
+			    $res1=insertDestination($_SESSION['user']['id'],$lowestDest[0]);
+			    $res2=insertDestination($_SESSION['user']['id'],$lowestDest[1]);
+			    $res3=insertDestination($_SESSION['user']['id'],$lowestDest[2]);
+			    $res4=insertDestination($_SESSION['user']['id'],$lowestDest[3]);
+			    $res5=insertDestination($_SESSION['user']['id'],$lowestDest[4]);
+			    if($res1 && $res2 && $res3 && $res4 && $res5){
+				    /*$lastDetails=getLastDetails();
 				    $_SESSION['details']['id']=$lastDetails['id'];
 				    $update=updateDatailsToUser($_SESSION['user']['id'],$_SESSION['details']['id']);
 				    $detailsId=getDetailsId($_SESSION['user']['id']);
-				    $res=getDetails($detailsId['detailed_destinations_id']);
-				    $_SESSION['first']=selectDestination($res['detail_1']);
-					$_SESSION['second']=selectDestination($res['detail_2']);
-					$_SESSION['third']=selectDestination($res['detail_3']);
-					$_SESSION['fourth']=selectDestination($res['detail_4']);
-					$_SESSION['fifth']=selectDestination($res['detail_5']);
+				    $res=getDetails($detailsId['detailed_destinations_id']);*/
+				    $_SESSION['first']=selectDestination($lowestDest[0]);
+					$_SESSION['second']=selectDestination($lowestDest[1]);
+					$_SESSION['third']=selectDestination($lowestDest[2]);
+					$_SESSION['fourth']=selectDestination($lowestDest[3]);
+					$_SESSION['fifth']=selectDestination($lowestDest[4]);
 				}
 				header("location: http://localhost:8080/licenta/detailedTrip.php");
 				break;
@@ -1000,6 +1020,11 @@ function insertTripTypes($history,$nature,$shopping,$art,$food_drink){
 	$query="insert into trip_types(history,nature,shopping,art,food_drink) values('$history','$nature','$shopping','$art','$food_drink')";
 	return mysqli_query($link, $query);
 }
+function insertTripTypesToUser($input,$id){
+  $link= conectare_db();
+  $query="update users set trip_types_id='$input' where id='$id'";
+  return mysqli_query($link,$query);
+}
 
 function updateTripTypeUser($id,$typeId){
 	$link= conectare_db();
@@ -1021,12 +1046,6 @@ function getLastTripTypes(){
   return mysqli_fetch_assoc($res);
 }
 
-function insertTripTypesToUser($input,$id){
-  $link= conectare_db();
-  $query="update users set trip_types_id='$input' where id='$id'";
-  return mysqli_query($link,$query);
-}
-
 //---------------------------------change user account
 
 function updateUserInfo($id, $username, $email, $password){
@@ -1037,4 +1056,26 @@ function updateUserInfo($id, $username, $email, $password){
 }
 
 
+function insertDestination($user_id,$destination_id){
+	$link= conectare_db();
+	$query="insert into users_destinations(user_id,destination_id) values('$user_id','$destination_id')";
+	return mysqli_query($link, $query);
+}
+
+function deleteDestionations($user_id){
+	$link= conectare_db();
+	$query="delete from users_destinations where user_id='$user_id'";
+	return mysqli_query($link, $query);
+}
+
+function selectAllDestinations($user_id){
+	$link= conectare_db();
+  $query="select * from users_destinations where user_id='$user_id'";
+  $res=mysqli_query($link, $query);
+  $vector=array();
+    while ($r=mysqli_fetch_array($res)){
+        array_push($vector, $r);
+    }
+    return $vector;
+}
 

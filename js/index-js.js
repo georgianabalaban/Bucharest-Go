@@ -203,7 +203,7 @@ $(document).ready(function() {
   
   var scrollLink = $('.scroll');
   
-  // Smooth scrolling
+  // ---------------------------Smooth scrolling-------------
   scrollLink.click(function(e) {
     e.preventDefault();
     $('body,html').animate({
@@ -211,7 +211,7 @@ $(document).ready(function() {
     }, 1000 );
   });
   
-  // Active link switching
+  //------------------------ Active link switching------------
   $(window).scroll(function() {
     var scrollbarLocation = $(this).scrollTop();
     
@@ -229,12 +229,12 @@ $(document).ready(function() {
   
 })
 
-
+//-------------------smooth scroll with aos library-------------
 AOS.init({
   duration: 1200,
 })
 
-
+//-------------------procentajul destinațiilor celor mai votate---------
 $(function() {
 
   var polar_to_cartesian, svg_circle_arc_path, animate_arc;
